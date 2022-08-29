@@ -1,4 +1,6 @@
 
+# WORK IN PROGRESS!
+
 ## Telomap - A tool for analyzing telobait-captured long-read telomere sequencing data'
 
 Telomap is a tool for handling telobait-captured long-read telomere sequencing data.
