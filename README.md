@@ -1,5 +1,5 @@
 
-# WORK IN PROGRESS!
+# WORK IN PROGRESS
 
 ## Telomap - A tool for analyzing telobait-captured long-read telomere sequencing data'
 
