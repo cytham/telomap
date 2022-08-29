@@ -15,7 +15,7 @@ Telomap is a tool for handling telobait-captured long-read telomere sequencing d
 ### Quick run
 
 ```
-telomap reads.fa capture_oligo.fa barcodes.fa data_type no_cores working_directory
+telomap [reads.fa] [capture_oligo.fa] [barcodes.fa] [data_type] [no_cores] [working_directory]
 ```
 
 | Argument | Comment |
