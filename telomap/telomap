@@ -1,0 +1,116 @@
+#!/usr/bin/env python3
+
+# Telomap: A tool for analyzing telobait-captured long-read telomere sequencing data
+
+__author__ = 'CY THAM'
+
+import os
+import sys
+from sys import argv
+import pickle
+from datetime import datetime
+from telomap.plots import *
+
+
+def main():
+    if len(argv) != 5:
+        sys.exit("Input Error - usage: telomap reads.bam capture_oligo.fa barcodes.fa data_type no_cores working_directory")
+
+    from telomap import TeloMap
+    now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
+    print(now + ' - Telomap started')
+
+    read_path = argv[1]
+    oligo_path = argv[2]
+    barcode_path = argv[3]
+    data_type = argv[4]
+    cores = argv[5]
+    wk_dir = argv[6]
+
+    # Run Telomap
+    out = TeloMap(read_path, oligo_path, barcode_path, data_type, cores, tsv_header=True)
+
+    # Prepare directories
+    if not os.path.exists(wk_dir):
+        os.mkdir(wk_dir)
+    plot_dir = os.path.join(wk_dir, 'plots')
+    if not os.path.exists(plot_dir):
+        os.mkdir(plot_dir)
+    plot_dir = os.path.join(wk_dir, 'plots', out.input_name)
+    qc_dir = os.path.join(wk_dir, 'plots_QC')
+    if not os.path.exists(qc_dir):
+        os.mkdir(qc_dir)
+    qc_dir = os.path.join(wk_dir, 'plots_QC', out.input_name)
+    trf_dir = os.path.join(wk_dir, 'plots_trf')
+    if not os.path.exists(trf_dir):
+        os.mkdir(trf_dir)
+    trf_dir = os.path.join(wk_dir, 'plots_trf', out.input_name)
+    tsv_dir = os.path.join(wk_dir, 'plots_tvs')
+    if not os.path.exists(tsv_dir):
+        os.mkdir(tsv_dir)
+    tsv_dir = os.path.join(wk_dir, 'plots_tvs', out.input_name)
+
+    # Pickle data
+    with open(os.path.join(wk_dir, out.input_name + ".telomap.pkl"), "wb") as f:
+        pickle.dump(out, f)
+
+    # Generate TSV files
+    create_tsv(out, wk_dir)
+
+    # Generate plots
+    # Plot overview figures
+    # Plot number of reads for each sample
+    plot_sample_read(out.df, plot_dir, out.barcodes)
+    # Pie chart of telomeric read capture
+    plot_pie(out.counts, plot_dir)
+    # Plot telomere length histogram
+    plot_telo_len(out.df, plot_dir)
+    # Plot telomere length per sample (Violin)
+    plot_telo_violin(out.df, plot_dir, out.barcodes)
+    # Plot telomere end motif
+    plot_telo_end(out.df, plot_dir, out.barcodes)
+    # Plot barplot for number of reads mapping to each chromosome end
+    plot_chrm_bar(out.df_anchors, plot_dir)
+    # Plot gap analysis
+    # plot_telo_gap(out.df, plot_dir, out.barcodes)
+
+    # Plot QC figures
+    # Plot read length histogram
+    plot_len(out.df, qc_dir)
+    # Plot read passes histogram
+    plot_passes(out.df, qc_dir)
+    # Plot read quality histogram
+    plot_qual(out.df, qc_dir)
+    # Plot read quality vs passes scatter plot
+    plot_pass_qual_scatter(out.df, qc_dir)
+
+    # Plot TRF figures
+    # Plot TRF1/TRF2 binding motif boxplot for each chromosome end
+    # plot_trf_boxplot(out.barcode_reads, out.df, trf_dir)
+
+    # Plot TVS figures
+    # Plot TVS signature figures
+    # plot_tvs_sig(out.tvs_arr, out.tvs_read_counts, tsv_dir, telo_len=1000)
+
+    now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
+    print(now + ' - Telomap ended')
+
+
+# Create TSV file from dataframe
+def create_tsv(out, wk_dir):
+    df_path = os.path.join(wk_dir, out.input_name + ".telomap.tsv")
+    dfa_path = os.path.join(wk_dir, out.input_name + ".telomap.anchors.tsv")
+    df_tsv = open(df_path, 'w')
+    dfa_tsv = open(dfa_path, 'w')
+    df_tsv.write(''.join(out.header))
+    df_tsv.close()
+    df = out.df[['rname', 'barcode', 'strand', 'chrom', 'read_len', 'telo_len_wgap', 'telo_len', 'trf_count', 'telo_end',
+                 'motifs', 's_junct', 'junct', 'oligo', 'oscore', 'bscore', 'num_pass', 'read_qual']]
+    dfa = out.df_anchors
+    df = df.sort_values(by=['barcode'])
+    df.to_csv(df_tsv, mode='a', header=False, index=False, sep='\t')
+    dfa.to_csv(dfa_tsv, header=False, index=False, sep='\t')
+
+
+if __name__ == '__main__':
+    main()
