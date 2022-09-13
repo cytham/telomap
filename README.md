@@ -2,12 +2,12 @@ Work in progress
 
 ## Telomap - A tool for analyzing telobait-captured long-read telomere sequencing data
 
-[![Build Status](https://app.travis-ci.com/cytham/cytocad.svg?branch=master)](https://app.travis-ci.com/github/cytham/telomap)
-[![PyPI pyversions](https://img.shields.io/pypi/pyversions/cytocad)](https://pypi.org/project/telomap/)
-[![PyPI versions](https://img.shields.io/pypi/v/cytocad)](https://pypi.org/project/telomap/)
-[![Conda](https://img.shields.io/conda/v/bioconda/cytocad)](https://anaconda.org/bioconda/telomap)
-[![Github release](https://img.shields.io/github/v/release/cytham/cytocad?include_prereleases)](../../releases)
-[![PyPI license](https://img.shields.io/pypi/l/cytocad)](./LICENSE.txt)
+[![Build Status](https://app.travis-ci.com/cytham/telomap.svg?branch=master)](https://app.travis-ci.com/github/cytham/telomap)
+[![PyPI pyversions](https://img.shields.io/pypi/pyversions/telomap)](https://pypi.org/project/telomap/)
+[![PyPI versions](https://img.shields.io/pypi/v/telomap)](https://pypi.org/project/telomap/)
+[![Conda](https://img.shields.io/conda/v/bioconda/telomap)](https://anaconda.org/bioconda/telomap)
+[![Github release](https://img.shields.io/github/v/release/cytham/telomap?include_prereleases)](../../releases)
+[![PyPI license](https://img.shields.io/pypi/l/telomap)](./LICENSE.txt)
 
 Telomap is a tool for downstream analysis on telobait-captured long-read telomere sequencing data.
 
