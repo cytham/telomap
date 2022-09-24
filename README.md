@@ -47,8 +47,6 @@ For more information, see [wiki](https://github.com/cytham/telomap/wiki).
 
 ### Installation
 
-#### GitHub
-
 ```bash
 git clone https://github.com/cytham/telomap.git 
 cd telomap
