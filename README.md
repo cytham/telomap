@@ -58,7 +58,7 @@ See [CHANGELOG](./CHANGELOG.txt)
 
 ## Citation
 
-Not available yet
+Publication in review
 
 ## Author
 
