@@ -3,11 +3,7 @@ Work in progress
 ## Telomap - A tool for analyzing telobait-captured long-read telomere sequencing data
 
 [![Build Status](https://app.travis-ci.com/cytham/telomap.svg?branch=master)](https://app.travis-ci.com/github/cytham/telomap)
-[![PyPI pyversions](https://img.shields.io/pypi/pyversions/telomap)](https://pypi.org/project/telomap/)
-[![PyPI versions](https://img.shields.io/pypi/v/telomap)](https://pypi.org/project/telomap/)
-[![Conda](https://img.shields.io/conda/v/bioconda/telomap)](https://anaconda.org/bioconda/telomap)
 [![Github release](https://img.shields.io/github/v/release/cytham/telomap?include_prereleases)](../../releases)
-[![PyPI license](https://img.shields.io/pypi/l/telomap)](./LICENSE.txt)
 
 Telomap is a tool for downstream analysis on telobait-captured long-read telomere sequencing data.
 
@@ -51,21 +47,7 @@ For more information, see [wiki](https://github.com/cytham/telomap/wiki).
 
 ### Installation
 
-There are three ways to install Telomap:
-
-#### Option 1: Conda (Recommended)
-
-```bash
-conda install -c bioconda telomap
-```
-
-#### Option 2: PyPI (See dependencies below)
-
-```bash
-pip install telomap
-```
-
-#### Option 3: GitHub (See dependencies below)
+#### GitHub
 
 ```bash
 git clone https://github.com/cytham/telomap.git 
