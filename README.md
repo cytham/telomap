@@ -58,7 +58,7 @@ See [CHANGELOG](./CHANGELOG.txt)
 
 ## Citation
 
-Publication in review
+Tham CY, Poon L, Yan T, Koh JYP, Ramlee MK, Teoh VSI, Zhang S, Cai Y, Hong Z, Lee GS, Liu J, Song HW, Hwang WYK, Teh BT, Tan P, Xu L, Koh AS, Osato M, Li S. High-throughput telomere length measurement at nucleotide resolution using the PacBio high fidelity sequencing platform. Nat Commun. 2023 Jan 17;14(1):281. doi: 10.1038/s41467-023-35823-7. PMID: 36650155; PMCID: PMC9845338.
 
 ## Author
 
