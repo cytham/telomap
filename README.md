@@ -1,5 +1,3 @@
-Work in progress
-
 ## Telomap - A tool for analyzing telobait-captured long-read telomere sequencing data
 
 [![Build Status](https://app.travis-ci.com/cytham/telomap.svg?branch=main)](https://app.travis-ci.com/github/cytham/telomap)
