@@ -13,7 +13,7 @@ from telomap.plots import *
 
 
 def main():
-    if len(argv) != 5:
+    if len(argv) != 7:
         sys.exit("Input Error - usage: telomap reads.bam capture_oligo.fa barcodes.fa data_type no_cores working_directory")
 
     from telomap import TeloMap
