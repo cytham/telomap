@@ -48,11 +48,12 @@ class TeloMap:
         seq_dict = {}
         with open(fasta) as f:
             for i in f:
-                seq_name = i.strip()
-                seq = next(f).strip()
-                fa = Seq(seq)
-                seq_rc = str(fa.reverse_complement())
-                seq_dict[seq_name] = [seq, seq_rc]
+                if i:
+                    seq_name = i.strip()
+                    seq = next(f).strip()
+                    fa = Seq(seq)
+                    seq_rc = str(fa.reverse_complement())
+                    seq_dict[seq_name] = [seq, seq_rc]
         return seq_dict
 
     # Create TVS header
