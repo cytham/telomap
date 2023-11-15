@@ -48,7 +48,7 @@ class TeloMap:
         seq_dict = {}
         with open(fasta) as f:
             for i in f:
-                if i:
+                if i.strip():
                     seq_name = i.strip()
                     seq = next(f).strip()
                     fa = Seq(seq)
