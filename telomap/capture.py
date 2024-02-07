@@ -239,7 +239,7 @@ class TeloCapture:
                                 junction = start
                             hit_barcode = barcode
                             hit_score_b = score_b
-                            if fasta[junction:junction + 13] != self.barcodes[barcode][0]:
+                            if fasta[junction:junction + max_score] != self.barcodes[barcode][0]:
                                 # Barcode sequence check failed
                                 raise Exception('Error: Barcode sequence %s does not match' % barcode)
                 if hit == 1:
@@ -272,7 +272,7 @@ class TeloCapture:
                                 junction = len(fasta) - end
                                 hit_barcode = barcode
                                 hit_score_b = score_b
-                                if fasta[end - 13:end] != self.barcodes[barcode][1]:
+                                if fasta[end - max_score:end] != self.barcodes[barcode][1]:
                                     # Barcode sequence check failed
                                     raise Exception('Error: Barcode sequence %s does not match' % barcode)
                     if hit == 1:
