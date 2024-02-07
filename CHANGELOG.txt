@@ -3,7 +3,11 @@ Telomap Changelog
 
 Release Summary:
 
-Version 0.0.4 - Sept , 2022
+Version 0.0.5 - Feb 8, 2024
+    * Fixed barcode check bug #4
+    * Fixed plot_chrm_bar "chrm" typo #4
+
+Version 0.0.4 - Sept, 2022
     * Added haplotype balancing for TVS signature analysis using kmeans clustering
     * Added output message for TVS signature analysis
 
