@@ -482,12 +482,13 @@ def plot_telo_gap(df, output_path, barcodes):
 def plot_chrm_bar(dfa, output_path):
     samples = dfa['sample'].unique().tolist()
     for s in samples:
-        sort_chrm = natsorted(dfa[dfa['sample'] == s]['chrm'].tolist(), alg=ns.LOWERCASEFIRST)
+        sort_chrm = natsorted(dfa[dfa['sample'] == s]['chrom'].tolist(), alg=ns.LOWERCASEFIRST)
         l = [x.replace('chr', '') for x in sort_chrm]
         fig = plt.figure(figsize=(16, 6))
         ax = fig.add_subplot(111)
-        bar_plot = sns.barplot(x='chrm', y='anchor_hits', data=dfa[dfa['sample'] == s], order=sort_chrm)
+        bar_plot = sns.barplot(x='chrom', y='anchor_hits', data=dfa[dfa['sample'] == s], order=sort_chrm)
         bar_plot.bar_label(bar_plot.containers[0])
+        _ = bar_plot.set_xticks(bar_plot.get_xticks())
         _ = bar_plot.set_xticklabels(l)
         ax.xaxis.grid(False)
         _ = plt.xticks(rotation=45, ha="right")
