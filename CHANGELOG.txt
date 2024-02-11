@@ -5,6 +5,7 @@ Release Summary:
 
 
 Version 0.0.6 - Feb 11, 2024
+    * Added capture oligo and barcode FASTA generation example on README
     * Fixed create_tsv IO error #4
     * Fixed tvs_analyzer indent error #4
     * Fixed tvs.py datetime bug
