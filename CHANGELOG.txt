@@ -3,6 +3,12 @@ Telomap Changelog
 
 Release Summary:
 
+
+Version 0.0.6 - Feb 11, 2024
+    * Fixed create_tsv IO error #4
+    * Fixed tvs_analyzer indent error #4
+    * Fixed tvs.py datetime bug
+
 Version 0.0.5 - Feb 8, 2024
     * Fixed barcode check bug #4
     * Fixed plot_chrm_bar "chrm" typo #4
