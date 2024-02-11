@@ -26,17 +26,39 @@ telomap [reads.fa] [capture_oligo.fa] [barcodes.fa] [data_type] [no_cores] [work
 | capture_oligo.fa | A FASTA file containing names and sequences of capture oligos |
 | barcodes.fa | A FASTA file containing names and sequences of sample barcode |
 | data_type | Type of long-read data (fasta/fastq/bam/pacbio-bam) |
-| no_cores | Number of cores to specify to hasten subtelomere clustering |
+| no_cores | Number of cores for subtelomere clustering |
 | working_directory | Working directory |
 
+### Generating capture oligo and barcode FASTA files
+The capture oligo sequence refers to the sequence after the barcode on the telobait, while the barcode sequence refers to the start of the telobait until the end of the barcode.
+
+See example below:
+```
+# Telobait 
+      5'-ATCGANNNNNNNNGATGCCAGATGCACGGAGCA...-Biotin-3'
+         |||||||||||||||||||||||||||||||||
+3'-CCAATCTAGCTNNNNNNNNCTACGGTCTACGTGCCTCGT...-5'
+
+where NNNNNNNN is the sample barcode
+
+# capture_oligo.fa
+>capture_oligo
+GATGCCAGATGCACGGAGCA
+
+# barcodes.fa
+>sample1
+ATCGACGGTTCAA
+>sample2
+ATCGAGCTGGATT
+>sample3
+ATCGATAACTCGG
+```
 #### Output
 
 | Output file | Comment |
 | :--- | :--- |
 | ${sample}.telomap.tsv | Main output table |
 | ${sample}.telomap.anchors.tsv | Table containing details of subtelomeric anchor sequences for chromosome-end mapping |
-
-For more information, see [wiki](https://github.com/cytham/telomap/wiki).
 
 ### Operating system
 
