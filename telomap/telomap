@@ -103,13 +103,14 @@ def create_tsv(out, wk_dir):
     df_tsv = open(df_path, 'w')
     dfa_tsv = open(dfa_path, 'w')
     df_tsv.write(''.join(out.header))
-    df_tsv.close()
     df = out.df[['rname', 'barcode', 'strand', 'chrom', 'read_len', 'telo_len_wgap', 'telo_len', 'trf_count', 'telo_end',
                  'motifs', 's_junct', 'junct', 'oligo', 'oscore', 'bscore', 'num_pass', 'read_qual']]
     dfa = out.df_anchors
     df = df.sort_values(by=['barcode'])
     df.to_csv(df_tsv, mode='a', header=False, index=False, sep='\t')
     dfa.to_csv(dfa_tsv, header=False, index=False, sep='\t')
+    df_tsv.close()
+    dfa_tsv.close()
 
 
 if __name__ == '__main__':
