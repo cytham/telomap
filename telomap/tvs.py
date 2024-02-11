@@ -68,8 +68,8 @@ def tvs_analyzer(barcodes, df, telo_len=3000):
                 n = n*2
             else:
                 arr_sum = (np.sum(arr, axis=0) / len(arr)) * 100
-        tvs_arr[b][c] = arr_sum
-        tvs_read_counts[b][c] = n
+            tvs_arr[b][c] = arr_sum
+            tvs_read_counts[b][c] = n
     now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
     print(now, ' - TVS analysis finished')
     return tvs_arr, tvs_read_counts
