@@ -72,7 +72,7 @@ def main():
     # Plot barplot for number of reads mapping to each chromosome end
     plot_chrm_bar(out.df_anchors, plot_dir)
     # Plot gap analysis
-    # plot_telo_gap(out.df, plot_dir, out.barcodes)
+    plot_telo_gap(out.df, plot_dir, out.barcodes)
 
     # Plot QC figures
     # Plot read length histogram
@@ -86,11 +86,11 @@ def main():
 
     # Plot TRF figures
     # Plot TRF1/TRF2 binding motif boxplot for each chromosome end
-    # plot_trf_boxplot(out.barcode_reads, out.df, trf_dir)
+    plot_trf_boxplot(out.barcode_reads, out.df, trf_dir)
 
     # Plot TVS figures
     # Plot TVS signature figures
-    # plot_tvs_sig(out.tvs_arr, out.tvs_read_counts, tsv_dir, telo_len=1000)
+    plot_tvs_sig(out.tvs_arr, out.tvs_read_counts, tsv_dir, telo_len=1000)
 
     now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
     print(now + ' - Telomap ended')
