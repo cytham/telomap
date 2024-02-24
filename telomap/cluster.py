@@ -4,7 +4,7 @@ from Bio import Align
 import random
 import pandas as pd
 from collections import Counter
-import datetime
+from datetime import datetime
 from multiprocessing import Lock, Process, Queue, current_process
 import time
 import queue
@@ -12,11 +12,11 @@ import queue
 
 class SubTeloClust:
     def __init__(self, read_fasta: dict, barcode_reads: dict, ref_path: str, cores: int):
-        self.begin_time = datetime.datetime.now()
+        self.begin_time = datetime.now()
         self.read_fasta = read_fasta
         self.barcode_reads = barcode_reads
         barcodes = [b for b in self.barcode_reads]
-        self.cores = cores
+        self.cores = int(cores)
         self.ref_path = ref_path
         self.all_motif_edit = {}
         self.all_anchor_groups = {}
@@ -45,7 +45,7 @@ class SubTeloClust:
         dfa = self.create_anchor_df()
         self.dfa = self.unique_clust_label(dfa)
         self.read_to_clust = self.read_to_cluster()
-        self.end_time = datetime.datetime.now()
+        self.end_time = datetime.now()
         # time_dif = self.end_time - self.begin_time
         now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
         print(now, ' - Clustering finished')

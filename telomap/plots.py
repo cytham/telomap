@@ -516,6 +516,7 @@ def plot_trf_boxplot(barcode_reads, df, output_path):
         ll = [x.replace('ZNA', 'NA') for x in l]
         ll = [x.replace('chr', '') for x in ll]
         box_plot = sns.boxplot(x="chrom", y="trf_count", data=df2, order=l, width=0.6, **props)
+        _ = box_plot.set_xticks(box_plot.get_xticks())
         _ = box_plot.set_xticklabels(ll)
         ax.xaxis.grid(False)
         _ = plt.xticks(rotation=45, ha="right")

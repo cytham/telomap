@@ -42,17 +42,17 @@ def main():
         os.mkdir(qc_dir)
     qc_dir = os.path.join(wk_dir, 'plots_QC', out.input_name)
     trf_dir = os.path.join(wk_dir, 'plots_trf')
-    if not os.path.exists(trf_dir):
-        os.mkdir(trf_dir)
+    #if not os.path.exists(trf_dir):
+    #    os.mkdir(trf_dir)
     trf_dir = os.path.join(wk_dir, 'plots_trf', out.input_name)
     tsv_dir = os.path.join(wk_dir, 'plots_tvs')
-    if not os.path.exists(tsv_dir):
-        os.mkdir(tsv_dir)
+    #if not os.path.exists(tsv_dir):
+    #    os.mkdir(tsv_dir)
     tsv_dir = os.path.join(wk_dir, 'plots_tvs', out.input_name)
 
     # Pickle data
-    with open(os.path.join(wk_dir, out.input_name + ".telomap.pkl"), "wb") as f:
-        pickle.dump(out, f)
+    #with open(os.path.join(wk_dir, out.input_name + ".telomap.pkl"), "wb") as f:
+    #    pickle.dump(out, f)
 
     # Generate TSV files
     create_tsv(out, wk_dir)
@@ -72,7 +72,7 @@ def main():
     # Plot barplot for number of reads mapping to each chromosome end
     plot_chrm_bar(out.df_anchors, plot_dir)
     # Plot gap analysis
-    plot_telo_gap(out.df, plot_dir, out.barcodes)
+    # plot_telo_gap(out.df, plot_dir, out.barcodes)  # Ignored to reduce memory usage
 
     # Plot QC figures
     # Plot read length histogram
@@ -86,11 +86,11 @@ def main():
 
     # Plot TRF figures
     # Plot TRF1/TRF2 binding motif boxplot for each chromosome end
-    plot_trf_boxplot(out.barcode_reads, out.df, trf_dir)
+    #plot_trf_boxplot(out.barcode_reads, out.df, trf_dir)  # Disabled due to memory consumption
 
     # Plot TVS figures
     # Plot TVS signature figures
-    plot_tvs_sig(out.tvs_arr, out.tvs_read_counts, tsv_dir, telo_len=1000)
+    #plot_tvs_sig(out.tvs_arr, out.tvs_read_counts, tsv_dir, telo_len=1000)  # Disabled due to memory consumption
 
     now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
     print(now + ' - Telomap ended')
