@@ -10,7 +10,7 @@ exec(open("telomap/version.py").read())
 setup(
     name='telomap',
     version=__version__,
-    packages=find_packages(),
+    packages=find_namespace_packages(),
     package_data={'telomap.ref': ['*.fa']},
     include_package_data=True,
     scripts=['telomap/telomap'],
