@@ -1,9 +1,9 @@
-#!/usr/bin/env python
+# #!/usr/bin/env python
 
-import setuptools
+# import setuptools
 
-if __name__ == "__main__":
-    setuptools.setup()
+# if __name__ == "__main__":
+#     setuptools.setup()
 
 # from setuptools import setup, find_packages, find_namespace_packages
 # import os
