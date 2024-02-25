@@ -1,22 +1,28 @@
 #!/usr/bin/env python3
 
-# Telomap: A tool for analyzing telobait-captured long-read telomere sequencing data
+# Telomap: A tool for analyzing telomeres in telobait-captured or WGS long-read sequencing data
 
-__author__ = 'CY THAM'
+__author__ = 'CY Tham'
 
 import os
-import sys
-from sys import argv
 import pickle
 from datetime import datetime
 from telomap.plots import *
-
+from telomap import TeloMap
+import telomap
 
 def main():
-    if len(argv) != 7:
-        sys.exit("Input Error - usage: telomap reads.bam capture_oligo.fa barcodes.fa data_type no_cores working_directory")
+    #if len(argv) != 7:
+    #    sys.exit("Input Error - usage: telomap reads.bam capture_oligo.fa barcodes.fa data_type no_cores working_directory")
 
-    from telomap import TeloMap
+    args = telomap.get_args()
+
+    # Observe verbosity
+    if args.quiet:
+        sys.stdout = open(os.devnull, 'w')
+
+    os.makedirs(args.dir, exist_ok=True)
+
     now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
     print(now + ' - Telomap started')
 
@@ -31,31 +37,21 @@ def main():
     out = TeloMap(read_path, oligo_path, barcode_path, data_type, cores, tsv_header=True)
 
     # Prepare directories
-    if not os.path.exists(wk_dir):
-        os.mkdir(wk_dir)
-    plot_dir = os.path.join(wk_dir, 'plots')
-    if not os.path.exists(plot_dir):
-        os.mkdir(plot_dir)
-    plot_dir = os.path.join(wk_dir, 'plots', out.input_name)
-    qc_dir = os.path.join(wk_dir, 'plots_QC')
-    if not os.path.exists(qc_dir):
-        os.mkdir(qc_dir)
-    qc_dir = os.path.join(wk_dir, 'plots_QC', out.input_name)
-    trf_dir = os.path.join(wk_dir, 'plots_trf')
-    #if not os.path.exists(trf_dir):
-    #    os.mkdir(trf_dir)
-    trf_dir = os.path.join(wk_dir, 'plots_trf', out.input_name)
-    tsv_dir = os.path.join(wk_dir, 'plots_tvs')
-    #if not os.path.exists(tsv_dir):
-    #    os.mkdir(tsv_dir)
-    tsv_dir = os.path.join(wk_dir, 'plots_tvs', out.input_name)
+    os.makedirs(os.path.join(args.dir, 'plots'), exist_ok=True)
+    plot_dir = os.path.join(args.dir, 'plots', out.input_name)
+    os.makedirs(os.path.join(args.dir, 'plots_QC'), exist_ok=True)
+    qc_dir = os.path.join(args.dir, 'plots_QC', out.input_name)
+    # os.makedirs(os.path.join(args.dir, 'plots_trf'), exist_ok=True)
+    # trf_dir = os.path.join(args.dir, 'plots_trf', out.input_name)
+    # os.makedirs(os.path.join(args.dir, 'plots_tvs'), exist_ok=True)
+    # tsv_dir = os.path.join(args.dir, 'plots_tvs', out.input_name)
 
     # Pickle data
-    #with open(os.path.join(wk_dir, out.input_name + ".telomap.pkl"), "wb") as f:
-    #    pickle.dump(out, f)
+    with open(os.path.join(args.dir, out.input_name + ".telomap.pkl"), "wb") as f:
+        pickle.dump(out, f)
 
     # Generate TSV files
-    create_tsv(out, wk_dir)
+    create_tsv(out, args.dir)
 
     # Generate plots
     # Plot overview figures
@@ -72,7 +68,7 @@ def main():
     # Plot barplot for number of reads mapping to each chromosome end
     plot_chrm_bar(out.df_anchors, plot_dir)
     # Plot gap analysis
-    # plot_telo_gap(out.df, plot_dir, out.barcodes)  # Ignored to reduce memory usage
+    # plot_telo_gap(out.df, plot_dir, out.barcodes)  # Disabled due to memory consumption
 
     # Plot QC figures
     # Plot read length histogram
@@ -86,11 +82,11 @@ def main():
 
     # Plot TRF figures
     # Plot TRF1/TRF2 binding motif boxplot for each chromosome end
-    #plot_trf_boxplot(out.barcode_reads, out.df, trf_dir)  # Disabled due to memory consumption
+    # plot_trf_boxplot(out.barcode_reads, out.df, trf_dir)  # Disabled due to memory consumption
 
     # Plot TVS figures
     # Plot TVS signature figures
-    #plot_tvs_sig(out.tvs_arr, out.tvs_read_counts, tsv_dir, telo_len=1000)  # Disabled due to memory consumption
+    # plot_tvs_sig(out.tvs_arr, out.tvs_read_counts, tsv_dir, telo_len=1000)  # Disabled due to memory consumption
 
     now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
     print(now + ' - Telomap ended')
