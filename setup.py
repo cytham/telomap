@@ -13,7 +13,6 @@ setup(
     packages=find_namespace_packages(),
     package_data={'telomap.ref': ['*.fa']},
     include_package_data=True,
-    scripts=['telomap/telomap'],
     url='https://github.com/cytham/telomap',
     license='gpl-3.0',
     author='Tham Cheng Yong',
