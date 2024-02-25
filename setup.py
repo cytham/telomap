@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, find_namespace_packages
 import os
 
 current_dir = os.path.abspath(os.path.dirname(__file__))
