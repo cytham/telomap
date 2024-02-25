@@ -7,15 +7,15 @@ __author__ = 'CY Tham'
 import os
 import pickle
 from datetime import datetime
-from telomap.plots import *
+from telomap import get_args
 from telomap import TeloMap
-import telomap
+from telomap.plots import *
 
 def main():
     #if len(argv) != 7:
     #    sys.exit("Input Error - usage: telomap reads.bam capture_oligo.fa barcodes.fa data_type no_cores working_directory")
 
-    args = telomap.get_args()
+    args = get_args()
 
     # Observe verbosity
     if args.quiet:
