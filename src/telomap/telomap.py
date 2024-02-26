@@ -13,31 +13,20 @@ from telomap import TeloMap
 from telomap.plots import *
 
 def main():
-    #if len(argv) != 7:
-    #    sys.exit("Input Error - usage: telomap reads.bam capture_oligo.fa barcodes.fa data_type no_cores working_directory")
-
     args = get_args()
 
     # Observe verbosity
     if args.quiet:
         sys.stdout = open(os.devnull, 'w')
 
-    os.makedirs(args.dir, exist_ok=True)
-
     now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
     print(now + ' - Telomap started')
 
-    read_path = argv[1]
-    oligo_path = argv[2]
-    barcode_path = argv[3]
-    data_type = argv[4]
-    cores = argv[5]
-    wk_dir = argv[6]
-
     # Run Telomap
-    out = TeloMap(read_path, oligo_path, barcode_path, data_type, cores, tsv_header=True)
+    out = TeloMap(args.reads, args.capture-oligo, args.barcodes, args.threads, tsv_header=True)
 
     # Prepare directories
+    os.makedirs(args.dir, exist_ok=True)
     os.makedirs(os.path.join(args.dir, 'plots'), exist_ok=True)
     plot_dir = os.path.join(args.dir, 'plots', out.input_name)
     os.makedirs(os.path.join(args.dir, 'plots_QC'), exist_ok=True)
