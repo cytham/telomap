@@ -21,7 +21,7 @@ def get_args(args=sys.argv[1:]):
                           metavar="[WORK_DIRECTORY]",
                           help="path to work directory")
 
-    optional.add_argument("-c", "--capture-oligo", type=str, metavar="path",
+    optional.add_argument("-c", "--capoligo", type=str, metavar="path",
                           help="path to capture oligo fasta file")
 
     optional.add_argument("-b", "--barcodes", type=str, metavar="path",
