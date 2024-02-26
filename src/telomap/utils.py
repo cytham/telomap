@@ -14,18 +14,18 @@ def get_args(args=sys.argv[1:]):
     optional = parser.add_argument_group("optional arguments")
     
     required.add_argument("reads", type=str,
-                          metavar="[reads]",
+                          metavar="[READS]",
                           help="path to input reads (fasta/fastq/bam/pacbio-bam")
 
     required.add_argument("dir", type=str,
-                          metavar="[work_directory]",
+                          metavar="[WORK_DIRECTORY]",
                           help="path to work directory")
 
     optional.add_argument("-c", "--capture-oligo", type=str, metavar="path",
-                          help="specify species for repeatmasker (e.g. human)", required=True)
+                          help="path to capture oligo fasta file")
 
     optional.add_argument("-b", "--barcodes", type=str, metavar="path",
-                          help="specify species for repeatmasker (e.g. human)", required=True)
+                          help="path to barcodes fasta file")
 
     def restrict_threads(t):
         t = int(t)

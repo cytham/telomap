@@ -1,6 +1,11 @@
 [build-system]
-requires = ["setuptools >= 61.0"]
-build-backend = "setuptools.build_meta"
+#requires = ["setuptools >= 61.0"]
+#build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/telomap/version.py"
 
 [project]
 name = "telomap"
@@ -37,5 +42,5 @@ Issues = "https://github.com/cytham/telomap/issues"
 Changelog = "https://github.com/cytham/telomap/blob/main/CHANGELOG.txt"
 
 [project.scripts]
-telomap = "telomap:main"
+telomap = "telomap.telomap:main"
 

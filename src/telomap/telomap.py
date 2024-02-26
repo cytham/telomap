@@ -9,6 +9,7 @@ import pickle
 from datetime import datetime
 from telomap import get_args
 from telomap import TeloMap
+#import telomap
 from telomap.plots import *
 
 def main():
