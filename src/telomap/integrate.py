@@ -11,28 +11,29 @@ from .version import __version__
 
 class TeloMap:
 
-    def __init__(self, read_path: str, oligo_path: str, barcode_path: str, cores: int, tsv_header=False):
+    def __init__(self, read_path: str, oligo_path: str, barcode_path: str, cores: int, sample_name: str, tsv_header=False):
         self.chm13_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'ref/t2t-chm13-subtelo-1000-60.fa')
         # self.data_type = data_type  # fasta, fastq, bam, pacbio-bam
         self.cores = cores
         self.tsv_header = tsv_header
+        self.input_name = sample_name
         # Parse capture oligo sequences
         self.oligos = self.parse_fasta(oligo_path)
         # Parse barcode sequences
         self.barcodes = self.parse_fasta(barcode_path)
-        self.df, self.read_fasta, self.barcode_reads, self.counts, self.input_name, self.header = \
+        self.df, self.read_fasta, self.barcode_reads, self.counts, self.header = \
             self.capture_telomeres(read_path)
         read_to_cluster, self.df_anchors = self.cluster_telomeres()
         self.df['chrom'] = self.df['rname'].map(read_to_cluster)
         self.tvs_arr, self.tvs_read_counts = self.telo_variant_seq_analysis()
 
     def capture_telomeres(self, read_path):
-        cap = TeloCapture(read_path, self.oligos, self.barcodes)
+        cap = TeloCapture(read_path, self.oligos, self.barcodes, self.input_name)
         if self.tsv_header:
             header = self.create_tvs_header(read_path, cap)
         else:
             header = None
-        return cap.df, cap.read_fasta, cap.barcode_reads, cap.counts, cap.input_name, header
+        return cap.df, cap.read_fasta, cap.barcode_reads, cap.counts, header
 
     def cluster_telomeres(self):
         clust = SubTeloClust(self.read_fasta, self.barcode_reads, self.chm13_path, self.cores)
