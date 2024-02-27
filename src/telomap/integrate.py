@@ -11,9 +11,9 @@ from .version import __version__
 
 class TeloMap:
 
-    def __init__(self, read_path: str, oligo_path: str, barcode_path: str, data_type: str, cores: int, tsv_header=False):
+    def __init__(self, read_path: str, oligo_path: str, barcode_path: str, cores: int, tsv_header=False):
         self.chm13_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'ref/t2t-chm13-subtelo-1000-60.fa')
-        self.data_type = data_type  # fasta, fastq, bam, pacbio-bam
+        # self.data_type = data_type  # fasta, fastq, bam, pacbio-bam
         self.cores = cores
         self.tsv_header = tsv_header
         # Parse capture oligo sequences
@@ -27,7 +27,7 @@ class TeloMap:
         self.tvs_arr, self.tvs_read_counts = self.telo_variant_seq_analysis()
 
     def capture_telomeres(self, read_path):
-        cap = TeloCapture(read_path, self.oligos, self.barcodes, self.data_type)
+        cap = TeloCapture(read_path, self.oligos, self.barcodes)
         if self.tsv_header:
             header = self.create_tvs_header(read_path, cap)
         else:
@@ -64,7 +64,7 @@ class TeloMap:
         h.append('##date=%s\n' % today_date)
         h.append('##tool=Telomap-%s\n' % __version__)
         h.append('##source_reads=%s\n' % read_path)
-        h.append('##data_type=%s\n' % self.data_type)
+        # h.append('##data_type=%s\n' % self.data_type)
         h.append('##oligo_sequence=%s\n' % self.oligos)
         h.append('##barcode_sequence=%s\n' % self.barcodes)
         h.append('##oligo_location=%s\n' % cap.oligo_loc)
