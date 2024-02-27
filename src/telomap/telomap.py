@@ -23,7 +23,7 @@ def main():
     print(now + ' - Telomap started')
 
     # Run Telomap
-    out = TeloMap(args.reads, args.capoligo, args.barcodes, args.threads, args.name, tsv_header=True)
+    out = TeloMap(args.reads, args.capoligo, args.barcodes, args.threads, args.outprefix, tsv_header=True)
 
     # Prepare directories
     os.makedirs(args.dir, exist_ok=True)
