@@ -83,7 +83,7 @@ class TeloMap:
         h.append('##minimum_telomere_length=%s\n' % cap.telo_min_len)
         h.append('##total_reads=%s\n' % cap.counts[0])
         h.append('##captured_reads=%s\n' % cap.counts[1])
-        h.append('##captured_reads_with_motif=%s\n' % cap.counts[2])
+        h.append('##captured_reads_with_motif=%s\n' % cap.counts[3])
         h.append('#RNAME\tBARCODE\tSTRAND\tCHROM\tRLEN\tTELOMERE_LEN\tTELOMERE_M_LEN\tTRF_COUNT\tTELOMERE_END\tMOTIF'
                  '\tSTART_JUNCT\tBARCODE_JUNC\tOLIGO\tOLIGO_SCORE\tBARCODE_SCORE\tNUM_PASS\tRQUAL\n')
         return h
