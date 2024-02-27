@@ -26,7 +26,11 @@ def get_args(args=sys.argv[1:]):
 
     optional.add_argument("-b", "--barcodes", type=str, metavar="path",
                           help="path to barcodes fasta file")
-
+    
+    optional.add_argument("-o", "--outprefix", type=str, metavar="path",
+                          default="sample"
+                          help="prefix of output files [sample]")
+    
     def restrict_threads(t):
         t = int(t)
         if t < 1:
