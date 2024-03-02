@@ -13,9 +13,7 @@ class TeloCapture:
 
     def __init__(self, read_path, oligos, barcodes, sample_name):
         self.read_path = read_path
-        self.oligos = oligos
-        self.barcodes = barcodes
-        self.analysis_mode = self.check_analysis_mode()
+        self.analysis_mode = self.check_analysis_mode()    
         self.data_type = self.detect_data_type()
         self.input_name = sample_name
         # self.pacbio_hifi_rq = 0.99  # Q20
@@ -52,6 +50,8 @@ class TeloCapture:
         now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
         if self.analysis_mode == 'telobait':
             print(now, ' - Execute telobait capture mode')
+            self.oligos = oligos
+            self.barcodes = barcodes
             self.df, self.read_fasta, self.barcode_reads, self.counts = self.telo_capture()
         elif self.analysis_mode == 'wgs':
             print(now, ' - Execute WGS capture mode')
