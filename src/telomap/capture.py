@@ -63,6 +63,7 @@ class TeloCapture:
         multi_no = 0
         telomere_no = 0
         read_fasta = {}
+        barcode_reads = {"sample": []}
         df_dict = {'rname': [], 'read_len': [], 'num_pass': [], 'read_qual': [], 'strand': [], 'oligo': [],
                    'barcode': [], 'oscore': [], 'bscore': [], 'junct': [], 'motifs': [], 'telo_end': [], 'telo_len': [],
                    'gap_size': [], 'gap_loc': [], 'gap_dist': [], 'gap_seq': [], 'telo_len_wgap': [],
