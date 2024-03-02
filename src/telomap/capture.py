@@ -118,7 +118,7 @@ class TeloCapture:
                         gap_sizes, gap_locs, gap_dists = self.identify_gaps(telo_motif_indexes)
                         gap_seq = self.get_gap_seq(fasta, gap_sizes, gap_locs)
                         # Analyze TRF1/TRF2 binding motif
-                        trf_motif_indexes = [(_.start(), _.end()) for _ in re.finditer(trf_motif, fasta)]
+                        trf_motif_indexes = [(_.start(), _.end()) for _ in re.finditer(self.trf_motif, fasta)]
                         if telo_len_no_gap <= self.trf_canonical_limit:
                             pass
                         else:
