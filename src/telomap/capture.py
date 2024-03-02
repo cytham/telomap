@@ -24,7 +24,7 @@ class TeloCapture:
         self.oligo_align_threshold = 1  # Minimum alignment score percentage required for capture oligo sequence match [100%]
         self.multi_oligo_align_threshold = 0.8  # Minimum alignment score fraction for additional capture oligo seq match [80%]
         self.barcode_align_threshold = 1  # Minimum alignment score percentage required for barcode sequence match [100%]
-        self.motif_window = 50  # Length of window (bp) to search for telomeric motif adjacent to capture oligo
+        self.motif_window = 50  # Length of window (bp) to search for telomeric motif adjacent to capture oligo, or end of read for WGS
         self.motif_counts = 2  # Minimum number of telomeric motifs required to pass (adjacent to capture oligo)
         self.motif_direction = 'upstream'  # Location of telomeric motif with respect to capture oligo (upstream/downstream)
         self.telo_start_sequence = 'TTAGGGTTAGGG'  # Defines the 5 prime start of telomere
@@ -49,7 +49,13 @@ class TeloCapture:
         self.aligner2.extend_gap_score = -1
         # self.input_name = self.get_input_name()
         self.data = self.read_input()
-        self.df, self.read_fasta, self.barcode_reads, self.counts = self.telo_capture()
+        now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
+        if self.analysis_mode == 'telobait':
+            print(now, ' - Execute telobait capture mode)
+            self.df, self.read_fasta, self.barcode_reads, self.counts = self.telo_capture()
+        elif self.analysis_mode == 'wgs':
+            print(now, ' - Execute WGS capture mode)
+            self.df, self.read_fasta, self.barcode_reads, self.counts = self.telo_capture_wgs()
 
     def telo_capture_wgs(self):
         total_no = 0
@@ -85,47 +91,37 @@ class TeloCapture:
             else:
                 np = None
                 rq = None
-            res = self.telo_finder(fasta)
-            if res:  # If sequence contain telomeric sequences
-                
-                if res != 'multi':  # If sequence aligns to a single oligo and barcode
-                    capture_no += 1
-                    oligo = res[0].strip('>')
-                    barcode = res[1].strip('>')
-                    strand = res[2]
-                    oligo_score = str(int(res[3]))
-                    bar_score = str(int(res[4]))
-                    junct = int(res[5])
-                    fasta = self.get_strand(fasta, strand)
-                    motif_out = self.motif_finder(fasta, junct)
-                    # Analyze capture sequence adjacent to capture oligo
-                    telo_end = self.get_end_motif(fasta, junct)
-                    if motif_out:  # If read contains telomeric motifs
-                        # Retrieve telomere end sequence
-                        motif = motif_out[0]
-                        telo_start = fasta.find(self.telo_start_sequence)
-                        if telo_start > -1:  # If telomere start sequence is found
-                            if junct - telo_start >= self.telo_min_len:  # Minimum telomere length filter
-                                telomere_no += 1
-                                barcode_reads[barcode].append(qname)
-                                telo_len_wgap = junct - telo_start
-                                telo_motif_indexes, telo_len_no_gap = self.get_motif_index(motif, fasta, telo_start, junct)
-                                # Analyze telomeric gaps
-                                gap_sizes, gap_locs, gap_dists = self.identify_gaps(telo_motif_indexes)
-                                gap_seq = self.get_gap_seq(fasta, gap_sizes, gap_locs)
-                                # Analyze telomeric end sequence
-                                # telo_end = self.get_end_motif(fasta, junct)
-                                # Analyze TRF1/TRF2 binding motif
-                                trf_motif_indexes = [(_.start(), _.end()) for _ in re.finditer(self.trf_motif, fasta)]
-                                if telo_len_no_gap <= self.trf_canonical_limit:
-                                    pass
-                                else:
-                                    trf_count = self.count_trf(len(motif), telo_start, telo_motif_indexes, trf_motif_indexes)
-                elif res == 'multi':  # If sequence aligns to multiple oligos or barcodes
-                    oligo = 'Multi'
-                    multi_no += 1
-                else:
-                    raise Exception('Error: Unrecognised alignment result %s' % str(res))
+            output = self.motif_finder_wgs(fasta)
+            if output:  # If read contains telomeric motifs
+                strand = '+'
+            else:
+                fa = Seq(fasta)
+                fasta = str(fa.reverse_complement())
+                output = telo_finder(fasta)
+                if output:  # If read contains telomeric motifs
+                    strand = '-'
+            if output:
+                motif = output[0]
+                telo_start_index = fasta.find(self.telo_start_sequence)
+                if telo_start_index > -1:  # If telomere start sequence is found
+                    # Retrieve last motif sequence
+                    last_motifs_fa = fasta[output[1][-1][0]:output[1][-1][0] + len(motif)*2]
+                    telo_end = self.wgs_get_end_motif(last_motifs_fa, motif)
+                    telo_end_index = output[1][-1][0] + len(telo_end)
+                    if telo_end_index - telo_start_index >= self.telo_min_len:  # Minimum telomere length filter
+                        telomere_no += 1
+                        barcode_reads["sample"].append(qname)
+                        telo_len_wgap = telo_end_index - telo_start_index
+                        telo_motif_indexes, telo_len_no_gap = self.get_telo_len_nogap(motif, output[1], telo_start_index, telo_end_index)
+                        # Analyze telomeric gaps
+                        gap_sizes, gap_locs, gap_dists = self.identify_gaps(telo_motif_indexes)
+                        gap_seq = self.get_gap_seq(fasta, gap_sizes, gap_locs)
+                        # Analyze TRF1/TRF2 binding motif
+                        trf_motif_indexes = [(_.start(), _.end()) for _ in re.finditer(trf_motif, fasta)]
+                        if telo_len_no_gap <= self.trf_canonical_limit:
+                            pass
+                        else:
+                            trf_count = self.count_trf(len(motif), telo_start_index, telo_motif_indexes, trf_motif_indexes)
             # Record data
             read_fasta[qname] = fasta  # Record FASTA
             df_dict['rname'].append(qname)
@@ -155,7 +151,7 @@ class TeloCapture:
         # Convert some columns from float to int64 to avoid decimal
         for col in ['junct', 's_junct', 'telo_len', 'telo_len_wgap', 'trf_count']:
             df[col] = df[col].fillna(-1).astype('int64').replace(-1, None)
-        return df, read_fasta, None, (total_no, capture_no, multi_no, telomere_no)
+        return df, read_fasta, barcode_reads, (total_no, capture_no, multi_no, telomere_no)
     
     def telo_capture(self):
         total_no = 0
@@ -458,7 +454,43 @@ class TeloCapture:
                 output = [motif, len(matches)]
                 break  # Only choose 1st motif
         return output
+    
+    # Find telomeric motifs in sequence (WGS)
+    def motif_finder_wgs(self, fasta, telo_loc='3prime'):
+        if telo_loc == '3prime':  # Telomere at 3prime end
+            search_region = fasta[len(fasta)-self.motif_window:]
+        elif telo_loc == '5prime':
+            search_region = fasta[:telo_window]
+            raise Exception('Error: 5prime setting currently disabled.')
+        output = []
+        for motif in self.motifs:
+            matches = [_.start() for _ in re.finditer(motif, search_region)]  # Quick search
+            if len(matches) >= self.motif_counts:
+                motif_indexes = [(_.start(), _.end()) for _ in re.finditer(motif, fasta)]  # Elaborate search
+                output = [motif, motif_indexes]
+                break  # Only choose 1st motif
+        return output
 
+    # Get end motif (WGS)
+    @staticmethod
+    def wgs_get_end_motif(fasta, motif):
+        for i in reversed(range(len(motif))):
+            end_motif = motif+motif[0:i]
+            if fasta.startswith(end_motif):
+                return end_motif[-len(motif):]
+
+    # Get telomere length (WGS)
+    @staticmethod
+    def get_telo_len_nogap(motif, motif_indexes, telo_start, telo_end_index):
+        telo_motif_indexes = []
+        count = 0
+        for k in motif_indexes:
+            if k[0] >= telo_start and k[1] <= telo_end_index:
+                count += 1
+                telo_motif_indexes.append(k)
+        telo_len_no_gap = count * len(motif)
+        return telo_motif_indexes, telo_len_no_gap
+    
     # Get indexes of telomeric motifs and calculate telomere length without gaps
     @staticmethod
     def get_motif_index(motif, fasta, telo_start, telo_end):
