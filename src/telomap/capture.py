@@ -98,7 +98,7 @@ class TeloCapture:
             else:
                 fa = Seq(fasta)
                 fasta = str(fa.reverse_complement())
-                output = telo_finder(fasta)
+                output = self.motif_finder_wgs(fasta)
                 if output:  # If read contains telomeric motifs
                     strand = '-'
             if output:
