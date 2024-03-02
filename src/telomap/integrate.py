@@ -47,6 +47,8 @@ class TeloMap:
     @staticmethod
     def parse_fasta(fasta):
         seq_dict = {}
+        if not fasta:
+            return None
         with open(fasta) as f:
             for i in f:
                 if i.strip():
