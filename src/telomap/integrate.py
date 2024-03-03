@@ -3,6 +3,7 @@
 import os
 from Bio.Seq import Seq
 from datetime import date
+from datetime import datetime
 from .capture import TeloCapture
 from .cluster import SubTeloClust
 from .tvs import tvs_analyzer
@@ -24,10 +25,16 @@ class TeloMap:
         # self.barcodes = self.parse_fasta(barcode_path)
         # Check mode and parse oligo and barcode sequences
         self.oligos, self.barcodes = self.check_mode(oligo_path, barcode_path)
+        now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
+        print(now + ' - Capturing telomeric reads')
         self.df, self.read_fasta, self.barcode_reads, self.counts, self.header = \
             self.capture_telomeres(read_path)
+        now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
+        print(now + ' - Clustering telomeric reads')
         read_to_cluster, self.df_anchors = self.cluster_telomeres()
         self.df['chrom'] = self.df['rname'].map(read_to_cluster)
+        now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
+        print(now + ' - Analyzing telomeric variant sequences')
         self.tvs_arr, self.tvs_read_counts = self.telo_variant_seq_analysis()
 
     def capture_telomeres(self, read_path):
