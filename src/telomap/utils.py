@@ -59,13 +59,17 @@ def get_args(args=sys.argv[1:]):
                           help="show this help message and exit")
   
     args = parser.parse_args(args)
-    
-    # args.insfa, args.suptsv = check_files(args.insfa, args.suptsv, args.dir)
+    check_analysis_mode(args.mode)
     return args
 
 # Custom usage message
 def msg():
     return "telomap [options] [RUN_MODE] [READS] [WORK_DIRECTORY]"
+
+# Check analysis mode
+def check_analysis_mode(mode):
+    if mode not in ['wgs', 'telobait']:
+        raise Exception('Error: {} mode specified not recognised; only accept "wgs" and "telobait" as run modes.'.format(mode))
 
 # # Check paths and executables
 # def check_exe(path, exe):
