@@ -12,6 +12,12 @@ def get_args(args=sys.argv[1:]):
 
     required = parser.add_argument_group("required arguments")
     optional = parser.add_argument_group("optional arguments")
+
+    required.add_argument("mode", type=str,
+                          metavar="[RUN_MODE]",
+                          help="""run mode:
+                          wgs - whole genome sequencing mode
+                          telobait - telobait capture mode""")
     
     required.add_argument("reads", type=str,
                           metavar="[READS]",
@@ -59,7 +65,7 @@ def get_args(args=sys.argv[1:]):
 
 # Custom usage message
 def msg():
-    return "telomap [options] [READS] [WORK_DIRECTORY]"
+    return "telomap [options] [RUN_MODE] [READS] [WORK_DIRECTORY]"
 
 # # Check paths and executables
 # def check_exe(path, exe):
