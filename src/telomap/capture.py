@@ -11,11 +11,11 @@ from Bio import Align
 
 class TeloCapture:
 
-    def __init__(self, read_path, oligos, barcodes, sample_name):
+    def __init__(self, read_path, oligos, barcodes, sample_name, mode):
         self.read_path = read_path
         self.oligos = oligos
         self.barcodes = barcodes
-        self.analysis_mode = self.check_analysis_mode()    
+        self.analysis_mode = mode    
         self.data_type = self.detect_data_type()
         self.input_name = sample_name
         # self.pacbio_hifi_rq = 0.99  # Q20
@@ -63,7 +63,8 @@ class TeloCapture:
         multi_no = 0
         telomere_no = 0
         read_fasta = {}
-        barcode_reads = {"sample": []}
+        barcode_reads = {x.strip('>'): [] for x in self.barcodes}
+        barcode_name = list(self.barcodes.keys())[0]
         df_dict = {'rname': [], 'read_len': [], 'num_pass': [], 'read_qual': [], 'strand': [], 'oligo': [],
                    'barcode': [], 'oscore': [], 'bscore': [], 'junct': [], 'motifs': [], 'telo_end': [], 'telo_len': [],
                    'gap_size': [], 'gap_loc': [], 'gap_dist': [], 'gap_seq': [], 'telo_len_wgap': [],
@@ -111,7 +112,7 @@ class TeloCapture:
                     telo_end_index = output[1][-1][0] + len(telo_end)
                     if telo_end_index - telo_start_index >= self.telo_min_len:  # Minimum telomere length filter
                         telomere_no += 1
-                        barcode_reads["sample"].append(qname)
+                        barcode_reads[barcode_name].append(qname)
                         telo_len_wgap = telo_end_index - telo_start_index
                         telo_motif_indexes, telo_len_no_gap = self.get_telo_len_nogap(motif, output[1], telo_start_index, telo_end_index)
                         # Analyze telomeric gaps
@@ -268,37 +269,6 @@ class TeloCapture:
             return 'bam'
         else:
             raise Exception('Error: Input data type is not accepted. Only "fasta", "fastq", or "bam" data types are accepted')
-    
-    # Check analysis if telobait or WGS
-    def check_analysis_mode(self):
-        if self.oligos and self.barcodes:
-            return 'telobait'
-        elif not self.oligos and not self.barcodes:
-            return 'wgs'
-        else:
-            raise Exception('Error: Both capture oligo and barcode fasta files are required for telobait analysis mode. Only one found. Provide none if running WGS mode.')
-    
-    # # Parse input name
-    # def get_input_name(self):
-    #     if self.data_type == 'fasta':
-    #         if any(self.read_path.lower().endswith(s) for s in ['.fa', '.fasta']):
-    #             input_name = os.path.basename(self.read_path).rsplit('.fa', 1)[0]
-    #         else:
-    #             raise Exception('Error: Input file is not recognised, please ensure file suffix has ".fa" or ".fasta"')
-    #     elif self.data_type == 'fastq':
-    #         if any(self.read_path.lower().endswith(s) for s in ['.fq', '.fastq']):
-    #             input_name = os.path.basename(self.read_path).rsplit('.f', 1)[0]
-    #         else:
-    #             raise Exception('Error: Input file is not recognised, please ensure file suffix has ".fq" or ".fastq"')
-    #     elif self.data_type in ['bam', 'pacbio-bam']:
-    #         if self.read_path.lower().endswith('.bam'):
-    #             input_name = os.path.basename(self.read_path).rsplit('.bam', 1)[0]
-    #         else:
-    #             raise Exception('Error: Input file is not recognised, please ensure file suffix has ".bam"')
-    #     else:
-    #         raise Exception('Error: Input data type "%s" is not accepted. Only accept "fasta", "fastq", "bam", or "pacbio-bam"' %
-    #                         self.data_type)
-    #     return input_name
 
     # Read input file
     def read_input(self):
@@ -309,9 +279,6 @@ class TeloCapture:
             save = pysam.set_verbosity(0)  # Suppress BAM index missing warning
             data = pysam.AlignmentFile(self.read_path, 'rb', check_sq=False)
             pysam.set_verbosity(save)
-        # else:
-        #     raise Exception('Error: Input data type "%s" is not accepted. Only accept "fasta", "fastq", "bam", or "pacbio-bam"' %
-        #                     self.data_type)
         return data
 
     # Generator for Fastatx
