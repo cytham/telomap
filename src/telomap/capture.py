@@ -74,6 +74,7 @@ class TeloCapture:
                 gap_sizes = gap_locs = gap_dists = gap_seq = telo_start = telo_motif_indexes = trf_motif_indexes = trf_count = \
                 None
             total_no += 1
+            capture_no += 1
             if total_no % 100000 == 0:
                 now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
                 print(now, ' - Analyzed %i sequences' % total_no)
