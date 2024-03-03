@@ -34,7 +34,7 @@ class TeloMap:
         read_to_cluster, self.df_anchors = self.cluster_telomeres()
         self.df['chrom'] = self.df['rname'].map(read_to_cluster)
         now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
-        print(now + ' - Analyzing telomeric variant sequences')
+        print(now + ' - Analyzing TVS')
         self.tvs_arr, self.tvs_read_counts = self.telo_variant_seq_analysis()
 
     def capture_telomeres(self, read_path):
