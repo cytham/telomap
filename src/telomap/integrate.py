@@ -49,11 +49,9 @@ class TeloMap:
     # Check mode and barcodes
     def check_mode(self, oligo_path, barcode_path):
         if self.mode == 'wgs':
-            print('Running WGS capture mode')
             oligos = {'>no_oligo': []}
             barcodes = {'>no_barcode': []}
         elif self.mode == 'telobait':
-            print('Running telobait capture mode')
             oligos = self.parse_fasta(oligo_path)
             barcodes = self.parse_fasta(barcode_path)
         return oligos, barcodes
