@@ -31,7 +31,7 @@ class TeloMap:
         self.tvs_arr, self.tvs_read_counts = self.telo_variant_seq_analysis()
 
     def capture_telomeres(self, read_path):
-        cap = TeloCapture(read_path, self.oligos, self.barcodes, self.input_name)
+        cap = TeloCapture(read_path, self.oligos, self.barcodes, self.input_name, self.mode)
         if self.tsv_header:
             header = self.create_tvs_header(read_path, cap)
         else:
