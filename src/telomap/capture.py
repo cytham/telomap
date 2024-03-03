@@ -152,7 +152,8 @@ class TeloCapture:
         df = pd.DataFrame.from_dict(df_dict)
         # Convert some columns from float to int64 to avoid decimal
         for col in ['junct', 's_junct', 'telo_len', 'telo_len_wgap', 'trf_count']:
-            df[col] = df[col].fillna(-1).astype('int64').replace(-1, None)
+            # df[col] = df[col].fillna(-1).astype('int64').replace(-1, None)
+            df[col] = df[col].astype(float).fillna(-1).astype('int64').replace(-1, None)
         return df, read_fasta, barcode_reads, (total_no, capture_no, multi_no, telomere_no)
     
     def telo_capture(self):
@@ -258,7 +259,8 @@ class TeloCapture:
         df = pd.DataFrame.from_dict(df_dict)
         # Convert some columns from float to int64 to avoid decimal
         for col in ['junct', 's_junct', 'telo_len', 'telo_len_wgap', 'trf_count']:
-            df[col] = df[col].fillna(-1).astype('int64').replace(-1, None)
+            # df[col] = df[col].fillna(-1).astype('int64').replace(-1, None)
+            df[col] = df[col].astype(float).fillna(-1).astype('int64').replace(-1, None)
         return df, read_fasta, barcode_reads, (total_no, capture_no, multi_no, telomere_no)
     
     # Detect data type
