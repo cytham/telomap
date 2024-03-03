@@ -7,7 +7,7 @@ from telomap import __version__
 # Parse input arguments
 def get_args(args=sys.argv[1:]):
 
-    parser = argparse.ArgumentParser(description="Telomap is a tool for analyzing telomeres from telobait-captured or WGS long-read sequencing data",
+    parser = argparse.ArgumentParser(description="Telomap is a tool for analyzing telomeres from WGS or telobait-capture long-read sequencing data",
                                      formatter_class=argparse.RawTextHelpFormatter, usage=msg(), add_help=False)
 
     required = parser.add_argument_group("required arguments")
@@ -16,8 +16,8 @@ def get_args(args=sys.argv[1:]):
     required.add_argument("mode", type=str,
                           metavar="[RUN_MODE]",
                           help="""run mode:
-                          wgs - whole genome sequencing mode
-                          telobait - telobait capture mode""")
+1) wgs - whole genome sequencing mode
+2) telobait - telobait capture mode""")
     
     required.add_argument("reads", type=str,
                           metavar="[READS]",
