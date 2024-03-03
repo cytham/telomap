@@ -11,16 +11,19 @@ from .version import __version__
 
 class TeloMap:
 
-    def __init__(self, read_path: str, oligo_path: str, barcode_path: str, cores: int, sample_name: str, tsv_header=False):
+    def __init__(self, mode:str, read_path: str, oligo_path: str, barcode_path: str, cores: int, sample_name: str, tsv_header=False):
         self.chm13_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'ref/t2t-chm13-subtelo-1000-60.fa')
         # self.data_type = data_type  # fasta, fastq, bam, pacbio-bam
+        self.mode = mode
         self.cores = cores
         self.tsv_header = tsv_header
         self.input_name = sample_name
         # Parse capture oligo sequences
-        self.oligos = self.parse_fasta(oligo_path)
+        # self.oligos = self.parse_fasta(oligo_path)
         # Parse barcode sequences
-        self.barcodes = self.parse_fasta(barcode_path)
+        # self.barcodes = self.parse_fasta(barcode_path)
+        # Check mode and parse oligo and barcode sequences
+        self.oligos, self.barcodes = self.check_mode(oligo_path, barcode_path)
         self.df, self.read_fasta, self.barcode_reads, self.counts, self.header = \
             self.capture_telomeres(read_path)
         read_to_cluster, self.df_anchors = self.cluster_telomeres()
@@ -43,6 +46,18 @@ class TeloMap:
         tvs_arr, tvs_read_counts = tvs_analyzer(self.barcode_reads, self.df)
         return tvs_arr, tvs_read_counts
 
+    # Check mode and barcodes
+    def check_mode(self, oligo_path, barcode_path):
+        if self.mode == 'wgs':
+            print('Running WGS capture mode')
+            oligos = {'>no_oligo': []}
+            barcodes = {'>no_barcode': []}
+        elif self.mode == 'telobait':
+            print('Running telobait capture mode')
+            oligos = self.parse_fasta(oligo_path)
+            barcodes = self.parse_fasta(barcode_path)
+        return oligos, barcodes
+    
     # Prepare parse fasta file
     @staticmethod
     def parse_fasta(fasta):
