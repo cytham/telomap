@@ -16,8 +16,8 @@ def get_args(args=sys.argv[1:]):
     required.add_argument("mode", type=str,
                           metavar="[RUN_MODE]",
                           help="""run mode:
-1) wgs - whole genome sequencing mode
-2) telobait - telobait capture mode""")
+- wgs (whole genome sequencing mode)
+- telobait (telobait capture mode)""")
     
     required.add_argument("reads", type=str,
                           metavar="[READS]",
