@@ -25,6 +25,7 @@ class TeloCapture:
         self.multi_oligo_align_threshold = 0.8  # Minimum alignment score fraction for additional capture oligo seq match [80%]
         self.barcode_align_threshold = 1  # Minimum alignment score percentage required for barcode sequence match [100%]
         self.motif_window = 50  # Length of window (bp) to search for telomeric motif adjacent to capture oligo, or end of read for WGS
+        self.motif_window_wgs = 150  # Length of window (bp) to search for telomeric motif for WGS mode
         self.motif_counts = 2  # Minimum number of telomeric motifs required to pass (adjacent to capture oligo)
         self.motif_direction = 'upstream'  # Location of telomeric motif with respect to capture oligo (upstream/downstream)
         self.telo_start_sequence = 'TTAGGGTTAGGG'  # Defines the 5 prime start of telomere
@@ -429,9 +430,9 @@ class TeloCapture:
     # Find telomeric motifs in sequence (WGS)
     def motif_finder_wgs(self, fasta, telo_loc='3prime'):
         if telo_loc == '3prime':  # Telomere at 3prime end
-            search_region = fasta[len(fasta)-self.motif_window:]
+            search_region = fasta[len(fasta)-self.motif_window_wgs:]
         elif telo_loc == '5prime':
-            search_region = fasta[:self.motif_window]
+            search_region = fasta[:self.motif_window_wgs]
             raise Exception('Error: 5prime setting currently disabled.')
         output = []
         for motif in self.motifs:
