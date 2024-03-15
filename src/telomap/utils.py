@@ -21,7 +21,7 @@ telobait (telobait capture mode)""")
     
     required.add_argument("reads", type=str,
                           metavar="[READS]",
-                          help="path to input reads (fasta/fastq/bam/pacbio-bam")
+                          help="path to input reads (fasta/fastq/bam/pacbio-bam)")
 
     required.add_argument("dir", type=str,
                           metavar="[WORK_DIRECTORY]",
