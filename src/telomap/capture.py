@@ -133,7 +133,7 @@ class TeloCapture:
             df_dict['num_pass'].append(np)
             df_dict['read_qual'].append(rq)
             df_dict['oligo'].append(oligo)
-            df_dict['barcode'].append(barcode)
+            df_dict['barcode'].append(barcode_name)
             df_dict['oscore'].append(oligo_score)
             df_dict['bscore'].append(bar_score)
             df_dict['junct'].append(junct)
