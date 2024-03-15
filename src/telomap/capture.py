@@ -431,7 +431,7 @@ class TeloCapture:
         if telo_loc == '3prime':  # Telomere at 3prime end
             search_region = fasta[len(fasta)-self.motif_window:]
         elif telo_loc == '5prime':
-            search_region = fasta[:telo_window]
+            search_region = fasta[:self.motif_window]
             raise Exception('Error: 5prime setting currently disabled.')
         output = []
         for motif in self.motifs:
