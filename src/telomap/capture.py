@@ -52,10 +52,10 @@ class TeloCapture:
         self.data = self.read_input()
         now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
         if self.analysis_mode == 'telobait':
-            print(now, ' - Running telobait capture mode')
+            print(now, '- Running telobait capture mode')
             self.df, self.read_fasta, self.barcode_reads, self.counts = self.telo_capture()
         elif self.analysis_mode == 'wgs':
-            print(now, ' - Running WGS capture mode')
+            print(now, '- Running WGS capture mode')
             self.df, self.read_fasta, self.barcode_reads, self.counts = self.telo_capture_wgs()
 
     def telo_capture_wgs(self):
