@@ -42,7 +42,7 @@ telomap -t 24 -c /path/to/capture_oligo.fa -b /path/to/barcodes.fa telobait /pat
 ```
 usage: telomap [options] [RUN_MODE] [READS] [WORK_DIRECTORY]
 
-Telomap is a tool for analyzing telomeres from WGS or telobait-capture long-read sequencing data
+Telomap is a tool for analyzing telomeric reads from WGS or telobait-capture long-read sequencing data
 
 required arguments:
   [RUN_MODE]            run modes:
