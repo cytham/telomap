@@ -61,6 +61,10 @@ class TeloMap:
         elif self.mode == 'telobait':
             oligos = self.parse_fasta(oligo_path)
             barcodes = self.parse_fasta(barcode_path)
+            if not oligos:
+                raise Exception('Error: Oligos FASTA input missing')
+            if not barcodes:
+                raise Exception('Error: Barcodes FASTA input missing')   
         return oligos, barcodes
     
     # Prepare parse fasta file
