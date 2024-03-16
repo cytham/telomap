@@ -12,13 +12,14 @@ from .version import __version__
 
 class TeloMap:
 
-    def __init__(self, mode:str, read_path: str, oligo_path: str, barcode_path: str, cores: int, sample_name: str, tsv_header=False):
+    def __init__(self, mode:str, read_path: str, oligo_path: str, barcode_path: str, cores: int, sample_name: str, motif: str, tsv_header=False):
         self.chm13_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'ref/t2t-chm13-subtelo-1000-60.fa')
         # self.data_type = data_type  # fasta, fastq, bam, pacbio-bam
         self.mode = mode
         self.cores = cores
         self.tsv_header = tsv_header
         self.input_name = sample_name
+        self.motif = motif
         # Parse capture oligo sequences
         # self.oligos = self.parse_fasta(oligo_path)
         # Parse barcode sequences
@@ -27,7 +28,7 @@ class TeloMap:
         self.oligos, self.barcodes = self.check_mode(oligo_path, barcode_path)
         now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
         print(now + ' - Capturing telomeric reads')
-        self.df, self.read_fasta, self.barcode_reads, self.counts, self.header = \
+        self.df, self.read_fasta, self.barcode_reads, self.counts, self.header, self.motif = \
             self.capture_telomeres(read_path)
         now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
         print(now + ' - Clustering telomeric reads')
