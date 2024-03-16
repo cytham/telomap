@@ -1,33 +1,69 @@
-## Telomap - A tool for analyzing telobait-captured long-read telomere sequencing data
+## New feature: Telomap version 0.1.0 onwards now supports input of whole-genome sequencing (WGS) long-read data
+
+## Telomap - Telomere capture tool for WGS or telobait long-read sequencing data
 
 [![Build Status](https://app.travis-ci.com/cytham/telomap.svg?branch=main)](https://app.travis-ci.com/github/cytham/telomap)
 
-Telomap is a tool for downstream analysis on telobait-captured long-read telomere sequencing data.
+Telomap is a tool to identify and analyse telomeric reads within WGS or telobait-captured long-read sequencing data.
 
 ### Basic information
 
 * Identify long-reads that contain telomeric sequences
-* De-multiplex barcoded samples
+* De-multiplex barcoded samples (for telobait-capture data)
 * Map telomeric reads to chromosome ends based on T2T-CHM13 assembly
 * Analyze the distribution of non-canonical telomeric motifs (Telomere variant sequences (TVS))
-* Create QC and analytical plots
+* Generate QC and analytic plots
 
 ## Getting Started
+
+### Installation
+
+```bash
+git clone https://github.com/cytham/telomap.git 
+cd telomap
+pip install .
+```
 
 ### Quick run
 
 ```bash
-telomap [reads.fa] [capture_oligo.fa] [barcodes.fa] [data_type] [no_cores] [working_directory]
+telomap [options] [RUN_MODE] [READS] [WORK_DIRECTORY]
+
+# For WGS mode with 24 threads
+telomap -t 24 wgs /path/to/reads.fastq.gz /path/to/work_dir
+
+# For telobait mode with 24 threads
+telomap -t 24 -c /path/to/capture_oligo.fa -b /path/to/barcodes.fa telobait /path/to/reads.fastq.gz /path/to/work_dir
+# See below for instructions to create capture_oligo.fa and barcodes.fa files
 ```
 
-| Argument | Comment |
-| :--- | :--- |
-| reads.fa | Long-read file in fasta/fastq/bam/pacbio-bam formats |
-| capture_oligo.fa | A FASTA file containing names and sequences of capture oligos |
-| barcodes.fa | A FASTA file containing names and sequences of sample barcode |
-| data_type | Type of long-read data (fasta/fastq/bam/pacbio-bam) |
-| no_cores | Number of cores for subtelomere clustering |
-| working_directory | Working directory |
+### Full usage
+
+```
+usage: telomap [options] [RUN_MODE] [READS] [WORK_DIRECTORY]
+
+Telomap is a tool for analyzing telomeres from WGS or telobait-capture long-read sequencing data
+
+required arguments:
+  [RUN_MODE]            run modes:
+                        wgs (whole genome sequencing mode)
+                        telobait (telobait capture mode)
+  [READS]               path to input reads (fasta/fastq/bam/pacbio-bam)
+  [WORK_DIRECTORY]      path to work directory
+
+optional arguments:
+  -c path, --capoligo path
+                        path to capture oligo fasta file
+  -b path, --barcodes path
+                        path to barcodes fasta file
+  -o path, --outprefix path
+                        prefix of output files [sample]
+  -t int, --threads int
+                        specify number of threads [1]
+  -v, --version         print version
+  -q, --quiet           hide verbose
+  -h, --help            show this help message and exit
+```
 
 ### Generating capture oligo and barcode FASTA files
 The capture oligo sequence refers to the sequence after the barcode on the telobait, while the barcode sequence refers to the start of the telobait until the end of the barcode.
@@ -41,11 +77,11 @@ See example below:
 
 where NNNNNNNN is the sample barcode
 
-# capture_oligo.fa
+# The capture_oligo.fa should contain the following sequence
 >capture_oligo
 GATGCCAGATGCACGGAGCA
 
-# barcodes.fa
+# The barcodes.fa should contain the following sequences
 >sample1
 ATCGACGGTTCAA
 >sample2
@@ -53,24 +89,58 @@ ATCGAGCTGGATT
 >sample3
 ATCGATAACTCGG
 ```
-#### Output
 
-| Output file | Comment |
+### Output
+
+| Output | Comment |
 | :--- | :--- |
-| ${sample}.telomap.tsv | Main output table |
+| ${sample}.telomap.tsv | Main output table containing per read information |
 | ${sample}.telomap.anchors.tsv | Table containing details of subtelomeric anchor sequences for chromosome-end mapping |
+| plots | Directory containg analytic plots |
+| plots_QC | Directory containing QC plots |
+
+#### Main output table information
+
+| # | Column name | Comment |
+| :--- | :--- | :--- |
+| 1 | RNAME | Read ID |
+| 2 | BARCODE | Detected sample barcode (NA for WGS mode) |
+| 3 | STRAND | Strand of read with reference to motif |
+| 4 | CHROM | Detected chromosomal end or unmappable sub-telomeric cluster (i.e. begins with "U") |
+| 5 | RLEN | Read length |
+| 6 | RAW_TELOMERE_LEN | Length of telomeric region demarcated by telomeric start and telomeric end (See below) |
+| 7 | TELOMERE_LEN | Length of telomeric region after excluding all non-telomeric sequences within RAW_TELOMERE_LEN (See below)|
+| 8 | TRF_COUNT | Number of TRF binding motifs detected (5'-TTAGGGTTA-3') |
+| 9 | TELOMERE_END | Estimated telomere end sequence |
+| 10 | MOTIF | Telomeric motif detected |
+| 11 | START_JUNC | Position on read where telomeric sequences start |
+| 12 | BARCODE_JUNC | Position on read where barcode was detected |
+| 13 | OLIGO | Name of capture oligo detected |
+| 14 | OLIGO_SCORE | Alignment score of capture oligo sequence |
+| 15 | BARCODE_SCORE | Alignment score of barcode sequence |
+| 16 | NUM_PASS | Number of full-length subreads (only for pacbio BAM data) |
+| 17 | RQUAL | Read quality (only for pacbio BAM data) |
+
+#### Telomere length definition
+| Term | Comment |
+| :--- | :--- |
+| Telomeric start | Refers to the 5′ end of the telomeric region on a read as defined by containing at least two consecutive telomeric repeats (5′-TTAGGGTTAGGG-3′) |
+| Telomeric end | Refers to the 3' end of the telomeric region on a read as defined by the postion adjacent to the telobait sequence in telobait mode, or the 3' most complete/partial telomeric sequence in WGS mode |
+| RAW_TELOMERE_LEN | Refers to the number of bases between telomeric start and telomeric end |
+| TELOMERE_LEN | Refers to the number of bases between telomeric start and telomeric end but excluding non-telomeric sequences |
+
+Example:
+
+Read = "ATAGGCATGC TTAGGGTTAGGG TTAGGG TTAGGG TTAGGG TG TTAGGG G TTAGGG TTGGG TTAGGG TTAGGGTTAG ATACAG"
+
+Telomeric start: Positions 11-22 (TTAGGGTTAGGG)  
+Telomeric end: Positions 67-76 (TTAGGGTTAG)  
+RAW_TELOMERE_LEN: 76 - 11 + 1 = 66 (TTAGGGTTAGGG TTAGGG TTAGGG TTAGGG TG TTAGGG G TTAGGG TTGGG TTAGGG TTAGGGTTAG)  
+TELOMERE_LEN: 9 motifs * 6 length = 54 (TTAGGGTTAGGG TTAGGG TTAGGG TTAGGG TTAGGG TTAGGG TTAGGG TTAGGG)  
 
 ### Operating system
 
-* Linux (x86_64 architecture, tested in Ubuntu 16.04)  
-
-### Installation
-
-```bash
-git clone https://github.com/cytham/telomap.git 
-cd telomap
-pip install .
-```
+* Linux (x86_64 architecture, tested in Ubuntu 22.04.1)
 
 ## Versioning
 
