@@ -72,7 +72,7 @@ class TeloCapture:
                    's_junct': [], 'telo_motif': [], 'trf_motif': [], 'trf_count': []}
         for seg in self.data:
             strand = oligo = barcode = oligo_score = bar_score = junct = motif = telo_end = telo_len_no_gap = telo_len_wgap = \
-                gap_sizes = gap_locs = gap_dists = gap_seq = telo_start = telo_motif_indexes = trf_motif_indexes = trf_count = \
+                gap_sizes = gap_locs = gap_dists = gap_seq = telo_start_index = telo_motif_indexes = trf_motif_indexes = trf_count = \
                 None
             total_no += 1
             capture_no += 1
