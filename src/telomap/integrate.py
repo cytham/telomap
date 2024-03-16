@@ -28,7 +28,7 @@ class TeloMap:
         self.oligos, self.barcodes = self.check_mode(oligo_path, barcode_path)
         now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
         print(now + ' - Capturing telomeric reads')
-        self.df, self.read_fasta, self.barcode_reads, self.counts, self.header, self.motif = \
+        self.df, self.read_fasta, self.barcode_reads, self.counts, self.header = \
             self.capture_telomeres(read_path)
         now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
         print(now + ' - Clustering telomeric reads')
@@ -39,7 +39,7 @@ class TeloMap:
         self.tvs_arr, self.tvs_read_counts = self.telo_variant_seq_analysis()
 
     def capture_telomeres(self, read_path):
-        cap = TeloCapture(read_path, self.oligos, self.barcodes, self.input_name, self.mode)
+        cap = TeloCapture(read_path, self.oligos, self.barcodes, self.input_name, self.mode, self.motif)
         if self.tsv_header:
             header = self.create_tvs_header(read_path, cap)
         else:
