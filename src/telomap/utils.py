@@ -7,7 +7,7 @@ from telomap import __version__
 # Parse input arguments
 def get_args(args=sys.argv[1:]):
 
-    parser = argparse.ArgumentParser(description="Telomap is a tool for analyzing telomeres from WGS or telobait-capture long-read sequencing data",
+    parser = argparse.ArgumentParser(description="Telomap is a tool for analyzing telomeric reads from WGS or telobait-capture long-read sequencing data",
                                      formatter_class=argparse.RawTextHelpFormatter, usage=msg(), add_help=False)
 
     required = parser.add_argument_group("required arguments")
@@ -33,9 +33,13 @@ telobait (telobait capture mode)""")
     optional.add_argument("-b", "--barcodes", type=str, metavar="path",
                           help="path to barcodes fasta file")
     
-    optional.add_argument("-n", "--name", type=str, metavar="path",
+    optional.add_argument("-n", "--name", type=str,
                           default="sample",
-                          help="name prefix of output files [sample]")
+                          help="name prefix for output files [sample]")
+
+    optional.add_argument("-m", "--motif", type=str,
+                          default="TTAGGG",
+                          help="telomeric motif sequence [TTAGGG]")
     
     def restrict_threads(t):
         t = int(t)
