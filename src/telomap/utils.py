@@ -33,9 +33,9 @@ telobait (telobait capture mode)""")
     optional.add_argument("-b", "--barcodes", type=str, metavar="path",
                           help="path to barcodes fasta file")
     
-    optional.add_argument("-o", "--outprefix", type=str, metavar="path",
+    optional.add_argument("-n", "--name", type=str, metavar="path",
                           default="sample",
-                          help="prefix of output files [sample]")
+                          help="name prefix of output files [sample]")
     
     def restrict_threads(t):
         t = int(t)
