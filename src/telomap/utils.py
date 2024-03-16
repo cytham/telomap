@@ -33,11 +33,11 @@ telobait (telobait capture mode)""")
     optional.add_argument("-b", "--barcodes", type=str, metavar="path",
                           help="path to barcodes fasta file")
     
-    optional.add_argument("-n", "--name", type=str,
+    optional.add_argument("-n", "--name", type=str, metavar="str",
                           default="sample",
                           help="name prefix for output files [sample]")
 
-    optional.add_argument("-m", "--motif", type=str,
+    optional.add_argument("-m", "--motif", type=str, metavar="str",
                           default="TTAGGG",
                           help="telomeric motif sequence [TTAGGG]")
     
