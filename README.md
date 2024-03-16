@@ -56,8 +56,8 @@ optional arguments:
                         path to capture oligo fasta file
   -b path, --barcodes path
                         path to barcodes fasta file
-  -o path, --outprefix path
-                        prefix of output files [sample]
+  -n str, --name str    name prefix for output files [sample]
+  -m str, --motif str   telomeric motif sequence [TTAGGG]
   -t int, --threads int
                         specify number of threads [1]
   -v, --version         print version
