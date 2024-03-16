@@ -206,14 +206,14 @@ class TeloCapture:
                     fasta = self.get_strand(fasta, strand)
                     motif_out = self.motif_finder(fasta, junct)
                     if motif_out:  # If read contains telomeric motifs
-                        # Analyze capture sequence adjacent to capture oligo
-                        telo_end = self.get_end_motif(fasta, junct)
                         # Retrieve telomere end sequence
                         motif = motif_out[0]
                         telo_start = fasta.find(self.telo_start_sequence)
                         if telo_start > -1:  # If telomere start sequence is found
                             if junct - telo_start >= self.telo_min_len:  # Minimum telomere length filter
                                 telomere_no += 1
+                                # Analyze capture sequence adjacent to capture oligo
+                                telo_end = self.get_end_motif(fasta, junct)
                                 barcode_reads[barcode].append(qname)
                                 telo_len_wgap = junct - telo_start
                                 telo_motif_indexes, telo_len_no_gap = self.get_motif_index(motif, fasta, telo_start, junct)
