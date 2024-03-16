@@ -11,7 +11,7 @@ from Bio import Align
 
 class TeloCapture:
 
-    def __init__(self, read_path, oligos, barcodes, sample_name, mode):
+    def __init__(self, read_path, oligos, barcodes, sample_name, mode, motif):
         self.read_path = read_path
         self.oligos = oligos
         self.barcodes = barcodes
@@ -31,7 +31,7 @@ class TeloCapture:
         self.telo_start_sequence = 'TTAGGGTTAGGG'  # Defines the 5 prime start of telomere
         self.motif_end_len = 6  # Length of telomere end sequence motif
         self.max_gap_size = 6  # Maximum gap size to be considered for gap sequence analysis
-        self.motifs = ['TTAGGG']  # Specify telomeric motifs
+        self.motifs = [motif]  # Specify telomeric motifs
         self.telo_min_len = 0
         self.trf_motif = 'TTAGGGTTA'  # Specify TRF1/2 binding motif
         self.trf_canonical_limit = 1000
