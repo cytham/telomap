@@ -64,6 +64,7 @@ telobait (telobait capture mode)""")
   
     args = parser.parse_args(args)
     check_analysis_mode(args.mode)
+    check_sample_name(args.name)
     return args
 
 # Custom usage message
@@ -75,27 +76,8 @@ def check_analysis_mode(mode):
     if mode not in ['wgs', 'telobait']:
         raise Exception('Error: {} mode specified not recognised; only accept "wgs" and "telobait" as run modes.'.format(mode))
 
-# # Check paths and executables
-# def check_exe(path, exe):
-#     if path is None:
-#         if distutils.spawn.find_executable(exe):
-#             return exe
-#         else:
-#             raise Exception("Error: %s executable is not in PATH" % exe)
-#     else:
-#         if distutils.spawn.find_executable(path):
-#             return path
-#         else:
-#             raise Exception("Error: %s path do not exist" % path)
-
-# # Check file paths
-# def check_files(insfa, suptsv, wk_dir):
-#     if insfa is None:
-#         insfa = os.path.join(wk_dir, 'ins_seq.fa')
-#     if suptsv is None:
-#         suptsv = os.path.join(wk_dir, 'sv_support_reads.tsv')
-#     if not os.path.isfile(insfa):
-#         raise Exception("Error: ins_seq.fa file is not found in %s." % insfa)  
-#     if not os.path.isfile(suptsv):
-#         raise Exception("Error: sv_support_reads.tsv file is not found in %s." % suptsv)
-#     return insfa, suptsv
+# Check sample name
+def check_sample_name(name):
+    substr = "/"
+    if substr in name:
+        raise Exception('Error: Input sample name "{}" is not allowd to contain "/" character'.format(name))
