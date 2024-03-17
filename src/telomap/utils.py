@@ -47,8 +47,8 @@ telobait (telobait capture mode)""")
 
     def restrict_float(f):
         f = float(f)
-        if f < 0 or f > 1:
-            raise argparse.ArgumentTypeError("%r not in range [0.00, 1.00]" % (f,))
+        if f < 0.5 or f > 1:
+            raise argparse.ArgumentTypeError("%r not in range [0.50, 1.00]" % (f,))
         return f
 
     optional.add_argument("--oligoscore", type=restrict_float, metavar="float",
