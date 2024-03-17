@@ -131,7 +131,7 @@ ATCGATAACTCGG
 | 14 | NUM_PASS | Number of full-length subreads (only for pacbio BAM data) |
 | 15 | RQUAL | Read quality (only for pacbio BAM data) |
 
-#### Telomere length calcution example:
+#### Telomere length calculation example:
 
 Example read: 5'-ATAGGCATGC TTAGGGTTAGGG TTAGGG TTAGGG TTAGGG TG TTAGGG G TTAGGG TTGGG TTAGGG TTAGGGTTAG ATACAG-3'
 
