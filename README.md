@@ -121,15 +121,24 @@ ATCGATAACTCGG
 
 #### Telomere length calcution example:
 
-Example read: 5'-"ATAGGCATGC TTAGGGTTAGGG TTAGGG TTAGGG TTAGGG TG TTAGGG G TTAGGG TTGGG TTAGGG TTAGGGTTAG ATACAG"-3'
+Example read: 5'-ATAGGCATGC TTAGGGTTAGGG TTAGGG TTAGGG TTAGGG TG TTAGGG G TTAGGG TTGGG TTAGGG TTAGGGTTAG ATACAG-3'
 
-| Term | Value | Comment |
+| Term | Value | Sequence | Comment |
+| :--- | :--- | :--- | :--- |
+| TELOMERE_START | 11 | TTAGGGTTAGGG | Positions 11-22 |
+| TELOMERE_END | 76 | TTAGGGTTAG | Positions 67-76 |
+| RAW_TELOMERE_LEN | 66 | TTAGGGTTAGGG TTAGGG TTAGGG TTAGGG TG TTAGGG G TTAGGG TTGGG TTAGGG TTAGGGTTAG | TELOMERE_START(76)-TELOMERE_END(11)+1=66 |
+| TELOMERE_LEN | 54 | TTAGGGTTAGGG TTAGGG TTAGGG TTAGGG TTAGGG TTAGGG TTAGGG TTAGGG | Motif count(9)*motif length(6)=54 |
+| TELOMERE_END_MOTIF | GGTTAG | GGTTAG | - |
+
+#### Subtelomeric anchor cluster table (sample.telomap.anchors.tsv)
+| # | Column name | Comment |
 | :--- | :--- | :--- |
-| TELOMERE_START | 11 | Positions 11-22 (TTAGGGTTAGGG) |
-| TELOMERE_END | 76 | Positions 67-76 (TTAGGGTTAG) |
-| RAW_TELOMERE_LEN | 66 | 76 - 11 + 1 = 66 (TTAGGGTTAGGG TTAGGG TTAGGG TTAGGG TG TTAGGG G TTAGGG TTGGG TTAGGG TTAGGGTTAG) |
-| TELOMERE_LEN | 54 | 9 motifs * 6 length = 54 (TTAGGGTTAGGG TTAGGG TTAGGG TTAGGG TTAGGG TTAGGG TTAGGG TTAGGG) |
-| TELOMERE_END_MOTIF | GGTTAG | |
+| 1 | BARCODE | Detected sample barcode (will be NA for WGS mode) |
+| 2 | ANCHOR_READ | Read ID of representative read for the anchor |
+| 3 | ANCHOR_SEQ | Consensus subtelomeric anchor sequence |
+| 4 | READ_SUPPORT | Number of reads supporting subtelomeric anchor sequence |
+| 5 | CHROM | Chromosomal end mapped by anchor sequence or unmappable anchor ID (i.e. begins with "U") |
 
 ### Operating system
 
