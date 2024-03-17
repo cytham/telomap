@@ -8,9 +8,15 @@ Telomap is a tool to identify and analyse telomeric reads within WGS or telobait
 
 ### Basic information
 
-* Identify long-reads that contain telomeric sequences
+Two modes of running
+1. Telobait mode: requires data generated from a wet lab telomere capturing method described in our [publication](https://www.nature.com/articles/s41467-023-35823-7).
+2. WGS mode: requires vanilla long-read data generated from whole-genome sequencing runs.
+
+General workflow
 * De-multiplex barcoded samples (for telobait-capture data)
-* Map telomeric reads to chromosome ends based on T2T-CHM13 assembly
+* Identify long-reads that contain telomeric sequences
+* Cluster subtelomeric region of telomeric reads to generate unique consensus anchor sequences
+* Map subtelomeric anchor sequences to chromosome ends based on T2T-CHM13 assembly
 * Analyze the distribution of non-canonical telomeric motifs (Telomere variant sequences (TVS))
 * Generate QC and analytic plots
 
