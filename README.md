@@ -58,6 +58,10 @@ optional arguments:
                         path to barcodes fasta file
   -n str, --name str    name prefix for output files [sample]
   -m str, --motif str   telomeric motif sequence [TTAGGG]
+  --oligoscore float    minimum alignment score fraction required
+                            for capture oligo sequence match [1]
+  --barscore float      minimum alignment score fraction required
+                            for barcode sequence match [1]
   -t int, --threads int
                         specify number of threads [1]
   -v, --version         print version
