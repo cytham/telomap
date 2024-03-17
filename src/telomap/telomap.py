@@ -89,7 +89,7 @@ def create_tsv(out, wk_dir):
     df_tsv = open(df_path, 'w')
     dfa_tsv = open(dfa_path, 'w')
     df_tsv.write(''.join(out.header))
-    dfa_tsv.write("BARCODE\tANCHOR_READ\tANCHOR_SEQ\tREAD_HITS\tCHROM\n")
+    dfa_tsv.write("BARCODE\tANCHOR_READ\tANCHOR_SEQ\tREAD_SUPPORT\tCHROM\n")
     df = out.df[['rname', 'oligo', 'barcode', 'strand', 'motifs', 'read_len', 'telo_len_wgap', 'telo_len', 'telo_end', 'trf_count', 'chrom', 
                  's_junct', 'e_junct', 'num_pass', 'read_qual']]
     dfa = out.df_anchors
