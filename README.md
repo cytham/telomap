@@ -9,8 +9,8 @@ Telomap is a tool to identify and analyse telomeric reads within WGS or telobait
 ### Basic information
 
 Two modes of running
-1. Telobait mode: requires data generated from a wet lab telomere capturing method described in our [publication](https://www.nature.com/articles/s41467-023-35823-7).
-2. WGS mode: requires vanilla long-read data generated from whole-genome sequencing runs.
+1. __Telobait mode__: requires data generated from a wet lab telomere capturing method described in our [publication](https://www.nature.com/articles/s41467-023-35823-7).
+2. __WGS mode__: requires vanilla long-read data generated from whole-genome sequencing runs.
 
 General workflow
 * De-multiplex barcoded samples (for telobait-capture data)
