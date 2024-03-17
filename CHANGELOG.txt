@@ -4,7 +4,7 @@ Telomap Changelog
 Release Summary:
 
 
-Version 0.1.0 - Mar , 2024
+Version 0.1.0 - Mar 17, 2024
     * This version now allows the input of WGS long-read data for telomeric read capture
     * Added flags for options
     * Added --oligoscore and --barscore options to fine tune oligo/barcode alignment in telobait mode
