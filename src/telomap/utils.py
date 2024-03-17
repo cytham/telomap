@@ -56,7 +56,7 @@ telobait (telobait capture mode)""")
                           help="""minimum alignment score fraction required 
     for capture oligo sequence match [1]""")
 
-    optional.add_argument("--barcodescore", type=restrict_float, metavar="float",
+    optional.add_argument("--barscore", type=restrict_float, metavar="float",
                           default=1,
                           help="""minimum alignment score fraction required 
     for barcode sequence match [1]""")
