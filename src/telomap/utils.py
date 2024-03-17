@@ -59,7 +59,11 @@ for capture oligo sequence match [1]""")
     optional.add_argument("--barscore", type=restrict_float, metavar="float",
                           default=1,
                           help="""minimum alignment score fraction required 
-for barcode sequence match [1]""")
+for barcode sequence match.
+Warning: Reducing this value
+may lead to multiple barcode
+mapping per read, causing 
+high read omission. [1]""")
     
     def restrict_threads(t):
         t = int(t)
