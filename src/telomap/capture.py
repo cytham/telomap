@@ -72,7 +72,7 @@ class TeloCapture:
                    's_junct': [], 'telo_motif': [], 'trf_motif': [], 'trf_count': []}
         for seg in self.data:
             strand = oligo = barcode = oligo_score = bar_score = junct = motif = telo_end = telo_len_no_gap = telo_len_wgap = \
-                gap_sizes = gap_locs = gap_dists = gap_seq = telo_start_index = telo_motif_indexes = trf_motif_indexes = trf_count = \
+                gap_sizes = gap_locs = gap_dists = gap_seq = telo_start_index = telo_end_index = telo_motif_indexes = trf_motif_indexes = trf_count = \
                 None
             total_no += 1
             capture_no += 1
@@ -147,13 +147,14 @@ class TeloCapture:
             df_dict['gap_dist'].append(gap_dists)
             df_dict['gap_seq'].append(gap_seq)
             df_dict['s_junct'].append(telo_start_index)
+            df_dict['e_junct'].append(telo_end_index)
             df_dict['telo_motif'].append(telo_motif_indexes)
             df_dict['trf_motif'].append(trf_motif_indexes)
             df_dict['trf_count'].append(trf_count)
         # Create dataframe
         df = pd.DataFrame.from_dict(df_dict)
         # Convert some columns from float to int64 to avoid decimal
-        for col in ['junct', 's_junct', 'telo_len', 'telo_len_wgap', 'trf_count']:
+        for col in ['junct', 's_junct', 'e_junct', 'telo_len', 'telo_len_wgap', 'trf_count']:
             # df[col] = df[col].fillna(-1).astype('int64').replace(-1, None)
             df[col] = df[col].astype(float).fillna(-1).astype('int64').replace(-1, None)
         return df, read_fasta, barcode_reads, (total_no, capture_no, multi_no, telomere_no)
@@ -171,7 +172,7 @@ class TeloCapture:
         barcode_reads = {x.strip('>'): [] for x in self.barcodes}
         for seg in self.data:
             strand = oligo = barcode = oligo_score = bar_score = junct = motif = telo_end = telo_len_no_gap = telo_len_wgap = \
-                gap_sizes = gap_locs = gap_dists = gap_seq = telo_start = telo_motif_indexes = trf_motif_indexes = trf_count = \
+                gap_sizes = gap_locs = gap_dists = gap_seq = telo_start_index = telo_motif_indexes = trf_motif_indexes = trf_count = \
                 None
             total_no += 1
             if total_no % 100000 == 0:
@@ -208,15 +209,15 @@ class TeloCapture:
                     if motif_out:  # If read contains telomeric motifs
                         # Retrieve telomere end sequence
                         motif = motif_out[0]
-                        telo_start = fasta.find(self.telo_start_sequence)
-                        if telo_start > -1:  # If telomere start sequence is found
-                            if junct - telo_start >= self.telo_min_len:  # Minimum telomere length filter
+                        telo_start_index = fasta.find(self.telo_start_sequence)
+                        if telo_start_index > -1:  # If telomere start sequence is found
+                            if junct - telo_start_index >= self.telo_min_len:  # Minimum telomere length filter
                                 telomere_no += 1
                                 # Analyze capture sequence adjacent to capture oligo
                                 telo_end = self.get_end_motif(fasta, junct)
                                 barcode_reads[barcode].append(qname)
-                                telo_len_wgap = junct - telo_start
-                                telo_motif_indexes, telo_len_no_gap = self.get_motif_index(motif, fasta, telo_start, junct)
+                                telo_len_wgap = junct - telo_start_index
+                                telo_motif_indexes, telo_len_no_gap = self.get_motif_index(motif, fasta, telo_start_index, junct)
                                 # Analyze telomeric gaps
                                 gap_sizes, gap_locs, gap_dists = self.identify_gaps(telo_motif_indexes)
                                 gap_seq = self.get_gap_seq(fasta, gap_sizes, gap_locs)
@@ -227,7 +228,7 @@ class TeloCapture:
                                 if telo_len_no_gap <= self.trf_canonical_limit:
                                     pass
                                 else:
-                                    trf_count = self.count_trf(len(motif), telo_start, telo_motif_indexes, trf_motif_indexes)
+                                    trf_count = self.count_trf(len(motif), telo_start_index, telo_motif_indexes, trf_motif_indexes)
                 elif res == 'multi':  # If sequence aligns to multiple oligos or barcodes
                     oligo = 'Multi'
                     multi_no += 1
@@ -253,14 +254,15 @@ class TeloCapture:
             df_dict['gap_loc'].append(gap_locs)
             df_dict['gap_dist'].append(gap_dists)
             df_dict['gap_seq'].append(gap_seq)
-            df_dict['s_junct'].append(telo_start)
+            df_dict['s_junct'].append(telo_start_index)
+            df_dict['e_junct'].append(junct)
             df_dict['telo_motif'].append(telo_motif_indexes)
             df_dict['trf_motif'].append(trf_motif_indexes)
             df_dict['trf_count'].append(trf_count)
         # Create dataframe
         df = pd.DataFrame.from_dict(df_dict)
         # Convert some columns from float to int64 to avoid decimal
-        for col in ['junct', 's_junct', 'telo_len', 'telo_len_wgap', 'trf_count']:
+        for col in ['junct', 's_junct', 'e_junct', 'telo_len', 'telo_len_wgap', 'trf_count']:
             # df[col] = df[col].fillna(-1).astype('int64').replace(-1, None)
             df[col] = df[col].astype(float).fillna(-1).astype('int64').replace(-1, None)
         return df, read_fasta, barcode_reads, (total_no, capture_no, multi_no, telomere_no)
