@@ -112,6 +112,6 @@ class TeloMap:
         h.append('##total_reads=%s\n' % cap.counts[0])
         h.append('##captured_reads=%s\n' % cap.counts[1])
         h.append('##captured_reads_with_motif=%s\n' % cap.counts[3])
-        h.append('#RNAME\tOLIGO\tBARCODE\tSTRAND\tMOTIF\tRLEN\tRAW_TELOMERE_LEN\tTELOMERE_LEN\tTELOMERE_END\tTRF_COUNT'
+        h.append('#RNAME\tOLIGO\tBARCODE\tSTRAND\tMOTIF\tRLEN\tRAW_TELOMERE_LEN\tTELOMERE_LEN\tTELOMERE_END_MOTIF\tTRF_COUNT'
                  '\tCHROM\tTELOMERE_START\tTELOMERE_END\tNUM_PASS\tRQUAL\n')
         return h
