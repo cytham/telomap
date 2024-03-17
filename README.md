@@ -135,7 +135,7 @@ Example read: 5'-ATAGGCATGC TTAGGGTTAGGG TTAGGG TTAGGG TTAGGG TG TTAGGG G TTAGGG
 | # | Column name | Comment |
 | :--- | :--- | :--- |
 | 1 | BARCODE | Detected sample barcode (will be NA for WGS mode) |
-| 2 | ANCHOR_READ | Read ID of representative read for the anchor |
+| 2 | ANCHOR_READ | Read ID of representative read for the anchor cluster |
 | 3 | ANCHOR_SEQ | Consensus subtelomeric anchor sequence |
 | 4 | READ_SUPPORT | Number of reads supporting subtelomeric anchor sequence |
 | 5 | CHROM | Chromosomal end mapped by anchor sequence or unmappable anchor ID (i.e. begins with "U") |
