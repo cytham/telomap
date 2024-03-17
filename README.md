@@ -36,10 +36,10 @@ pip install .
 telomap [options] [RUN_MODE] [READS] [WORK_DIRECTORY]
 
 # For WGS mode with 24 threads
-telomap -t 24 wgs /path/to/reads.fastq.gz /path/to/work_dir
+telomap wgs /path/to/reads.fastq.gz /path/to/work_dir -t 24 
 
 # For telobait mode with 24 threads
-telomap -t 24 -c /path/to/capture_oligo.fa -b /path/to/barcodes.fa telobait /path/to/reads.fastq.gz /path/to/work_dir
+telomap telobait /path/to/reads.fastq.gz /path/to/work_dir -t 24 -c /path/to/capture_oligo.fa -b /path/to/barcodes.fa
 # See below for instructions to create capture_oligo.fa and barcodes.fa files
 ```
 
