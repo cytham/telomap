@@ -1,61 +1,47 @@
 #!/usr/bin/env python3
 
-# Telomap: A tool for analyzing telobait-captured long-read telomere sequencing data
+# Telomap: A tool for analyzing telomeres in telobait-captured or WGS long-read sequencing data
 
-__author__ = 'CY THAM'
+__author__ = 'CY Tham'
 
 import os
-import sys
-from sys import argv
 import pickle
 from datetime import datetime
+from telomap import get_args
+from telomap import TeloMap
+#import telomap
 from telomap.plots import *
 
-
 def main():
-    if len(argv) != 7:
-        sys.exit("Input Error - usage: telomap reads.bam capture_oligo.fa barcodes.fa data_type no_cores working_directory")
+    args = get_args()
 
-    from telomap import TeloMap
+    # Observe verbosity
+    if args.quiet:
+        sys.stdout = open(os.devnull, 'w')
+
     now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
     print(now + ' - Telomap started')
 
-    read_path = argv[1]
-    oligo_path = argv[2]
-    barcode_path = argv[3]
-    data_type = argv[4]
-    cores = argv[5]
-    wk_dir = argv[6]
-
     # Run Telomap
-    out = TeloMap(read_path, oligo_path, barcode_path, data_type, cores, tsv_header=True)
+    out = TeloMap(args.mode, args.reads, args.capoligo, args.barcodes, args.threads, args.name, args.motif, args.oligoscore, args.barscore, tsv_header=True)
 
     # Prepare directories
-    if not os.path.exists(wk_dir):
-        os.mkdir(wk_dir)
-    plot_dir = os.path.join(wk_dir, 'plots')
-    if not os.path.exists(plot_dir):
-        os.mkdir(plot_dir)
-    plot_dir = os.path.join(wk_dir, 'plots', out.input_name)
-    qc_dir = os.path.join(wk_dir, 'plots_QC')
-    if not os.path.exists(qc_dir):
-        os.mkdir(qc_dir)
-    qc_dir = os.path.join(wk_dir, 'plots_QC', out.input_name)
-    trf_dir = os.path.join(wk_dir, 'plots_trf')
-    #if not os.path.exists(trf_dir):
-    #    os.mkdir(trf_dir)
-    trf_dir = os.path.join(wk_dir, 'plots_trf', out.input_name)
-    tsv_dir = os.path.join(wk_dir, 'plots_tvs')
-    #if not os.path.exists(tsv_dir):
-    #    os.mkdir(tsv_dir)
-    tsv_dir = os.path.join(wk_dir, 'plots_tvs', out.input_name)
+    os.makedirs(args.dir, exist_ok=True)
+    os.makedirs(os.path.join(args.dir, 'plots'), exist_ok=True)
+    plot_dir = os.path.join(args.dir, 'plots', out.input_name)
+    os.makedirs(os.path.join(args.dir, 'plots_QC'), exist_ok=True)
+    qc_dir = os.path.join(args.dir, 'plots_QC', out.input_name)
+    # os.makedirs(os.path.join(args.dir, 'plots_trf'), exist_ok=True)
+    # trf_dir = os.path.join(args.dir, 'plots_trf', out.input_name)
+    # os.makedirs(os.path.join(args.dir, 'plots_tvs'), exist_ok=True)
+    # tsv_dir = os.path.join(args.dir, 'plots_tvs', out.input_name)
 
     # Pickle data
-    #with open(os.path.join(wk_dir, out.input_name + ".telomap.pkl"), "wb") as f:
-    #    pickle.dump(out, f)
+    # with open(os.path.join(args.dir, out.input_name + ".telomap.pkl"), "wb") as f:
+    #     pickle.dump(out, f)
 
     # Generate TSV files
-    create_tsv(out, wk_dir)
+    create_tsv(out, args.dir)
 
     # Generate plots
     # Plot overview figures
@@ -72,7 +58,7 @@ def main():
     # Plot barplot for number of reads mapping to each chromosome end
     plot_chrm_bar(out.df_anchors, plot_dir)
     # Plot gap analysis
-    # plot_telo_gap(out.df, plot_dir, out.barcodes)  # Ignored to reduce memory usage
+    # plot_telo_gap(out.df, plot_dir, out.barcodes)  # Disabled due to memory consumption
 
     # Plot QC figures
     # Plot read length histogram
@@ -86,11 +72,11 @@ def main():
 
     # Plot TRF figures
     # Plot TRF1/TRF2 binding motif boxplot for each chromosome end
-    #plot_trf_boxplot(out.barcode_reads, out.df, trf_dir)  # Disabled due to memory consumption
+    # plot_trf_boxplot(out.barcode_reads, out.df, trf_dir)  # Disabled due to memory consumption
 
     # Plot TVS figures
     # Plot TVS signature figures
-    #plot_tvs_sig(out.tvs_arr, out.tvs_read_counts, tsv_dir, telo_len=1000)  # Disabled due to memory consumption
+    # plot_tvs_sig(out.tvs_arr, out.tvs_read_counts, tsv_dir, telo_len=1000)  # Disabled due to memory consumption
 
     now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
     print(now + ' - Telomap ended')
@@ -103,8 +89,9 @@ def create_tsv(out, wk_dir):
     df_tsv = open(df_path, 'w')
     dfa_tsv = open(dfa_path, 'w')
     df_tsv.write(''.join(out.header))
-    df = out.df[['rname', 'barcode', 'strand', 'chrom', 'read_len', 'telo_len_wgap', 'telo_len', 'trf_count', 'telo_end',
-                 'motifs', 's_junct', 'junct', 'oligo', 'oscore', 'bscore', 'num_pass', 'read_qual']]
+    dfa_tsv.write("BARCODE\tANCHOR_READ\tANCHOR_SEQ\tREAD_SUPPORT\tCHROM\n")
+    df = out.df[['rname', 'oligo', 'barcode', 'strand', 'motifs', 'read_len', 'telo_len_wgap', 'telo_len', 'telo_end', 'trf_count', 'chrom', 
+                 's_junct', 'e_junct', 'num_pass', 'read_qual']]
     dfa = out.df_anchors
     df = df.sort_values(by=['barcode'])
     df.to_csv(df_tsv, mode='a', header=False, index=False, sep='\t')

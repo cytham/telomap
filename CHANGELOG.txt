@@ -4,6 +4,15 @@ Telomap Changelog
 Release Summary:
 
 
+Version 0.1.0 - Mar 17, 2024
+    * This version now allows the input of WGS long-read data for telomeric read capture
+    * Added flags for options
+    * Added --oligoscore and --barscore options to fine tune oligo/barcode alignment in telobait mode
+    * Added --motif to allow capture of non-canonical telomeric motif
+    * Added mandatory capture mode input (wgs or telobait)
+    * Oligo and barcode FASTA files now not needed for WGS mode
+    * Removed gap plot due to high memory consumption
+
 Version 0.0.7 - Feb 24, 2024
     * Fixed cluster.py datetime bug
     * Removed tvs and trf plots due to high memory usage

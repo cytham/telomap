@@ -48,7 +48,7 @@ class SubTeloClust:
         self.end_time = datetime.now()
         # time_dif = self.end_time - self.begin_time
         now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
-        print(now, ' - Clustering finished')
+        print(now, '- Clustering finished')
         # print(self.end_time - self.begin_time)
 
     # Cluster telomeres by their subtelomere sequence
