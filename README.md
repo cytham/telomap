@@ -61,7 +61,9 @@ optional arguments:
   --oligoscore float    minimum alignment score fraction required
                         for capture oligo sequence match [1]
   --barscore float      minimum alignment score fraction required
-                        for barcode sequence match [1]
+                        for barcode sequence match. Warning: Reducing
+                        this value may lead to multiple barcode mapping
+                        per read, causing high read omission. [1]
   -t int, --threads int
                         specify number of threads [1]
   -v, --version         print version
