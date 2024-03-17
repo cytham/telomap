@@ -67,7 +67,7 @@ class TeloCapture:
         barcode_reads = {x.strip('>'): [] for x in self.barcodes}
         barcode_name = list(self.barcodes.keys())[0].strip('>')
         df_dict = {'rname': [], 'read_len': [], 'num_pass': [], 'read_qual': [], 'strand': [], 'oligo': [],
-                   'barcode': [], 'oscore': [], 'bscore': [], 'junct': [], 'motifs': [], 'telo_end': [], 'telo_len': [],
+                   'barcode': [], 'oscore': [], 'bscore': [], 'e_junct': [], 'motifs': [], 'telo_end': [], 'telo_len': [],
                    'gap_size': [], 'gap_loc': [], 'gap_dist': [], 'gap_seq': [], 'telo_len_wgap': [],
                    's_junct': [], 'telo_motif': [], 'trf_motif': [], 'trf_count': []}
         for seg in self.data:
@@ -136,7 +136,6 @@ class TeloCapture:
             df_dict['barcode'].append(barcode_name)
             df_dict['oscore'].append(oligo_score)
             df_dict['bscore'].append(bar_score)
-            df_dict['junct'].append(junct)
             df_dict['strand'].append(strand)
             df_dict['motifs'].append(motif)
             df_dict['telo_end'].append(telo_end)
@@ -154,7 +153,7 @@ class TeloCapture:
         # Create dataframe
         df = pd.DataFrame.from_dict(df_dict)
         # Convert some columns from float to int64 to avoid decimal
-        for col in ['junct', 's_junct', 'e_junct', 'telo_len', 'telo_len_wgap', 'trf_count']:
+        for col in ['s_junct', 'e_junct', 'telo_len', 'telo_len_wgap', 'trf_count']:
             # df[col] = df[col].fillna(-1).astype('int64').replace(-1, None)
             df[col] = df[col].astype(float).fillna(-1).astype('int64').replace(-1, None)
         return df, read_fasta, barcode_reads, (total_no, capture_no, multi_no, telomere_no)
@@ -166,7 +165,7 @@ class TeloCapture:
         telomere_no = 0
         read_fasta = {}
         df_dict = {'rname': [], 'read_len': [], 'num_pass': [], 'read_qual': [], 'strand': [], 'oligo': [],
-                   'barcode': [], 'oscore': [], 'bscore': [], 'junct': [], 'motifs': [], 'telo_end': [], 'telo_len': [],
+                   'barcode': [], 'oscore': [], 'bscore': [], 'e_junct': [], 'motifs': [], 'telo_end': [], 'telo_len': [],
                    'gap_size': [], 'gap_loc': [], 'gap_dist': [], 'gap_seq': [], 'telo_len_wgap': [],
                    's_junct': [], 'telo_motif': [], 'trf_motif': [], 'trf_count': []}
         barcode_reads = {x.strip('>'): [] for x in self.barcodes}
@@ -244,7 +243,6 @@ class TeloCapture:
             df_dict['barcode'].append(barcode)
             df_dict['oscore'].append(oligo_score)
             df_dict['bscore'].append(bar_score)
-            df_dict['junct'].append(junct)
             df_dict['strand'].append(strand)
             df_dict['motifs'].append(motif)
             df_dict['telo_end'].append(telo_end)
@@ -262,7 +260,7 @@ class TeloCapture:
         # Create dataframe
         df = pd.DataFrame.from_dict(df_dict)
         # Convert some columns from float to int64 to avoid decimal
-        for col in ['junct', 's_junct', 'e_junct', 'telo_len', 'telo_len_wgap', 'trf_count']:
+        for col in ['s_junct', 'e_junct', 'telo_len', 'telo_len_wgap', 'trf_count']:
             # df[col] = df[col].fillna(-1).astype('int64').replace(-1, None)
             df[col] = df[col].astype(float).fillna(-1).astype('int64').replace(-1, None)
         return df, read_fasta, barcode_reads, (total_no, capture_no, multi_no, telomere_no)
