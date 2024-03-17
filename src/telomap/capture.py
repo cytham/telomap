@@ -66,6 +66,7 @@ class TeloCapture:
         read_fasta = {}
         barcode_reads = {x.strip('>'): [] for x in self.barcodes}
         barcode_name = list(self.barcodes.keys())[0].strip('>')
+        oligo_name = list(self.oligos.keys())[0].strip('>')
         df_dict = {'rname': [], 'read_len': [], 'num_pass': [], 'read_qual': [], 'strand': [], 'oligo': [],
                    'barcode': [], 'oscore': [], 'bscore': [], 'e_junct': [], 'motifs': [], 'telo_end': [], 'telo_len': [],
                    'gap_size': [], 'gap_loc': [], 'gap_dist': [], 'gap_seq': [], 'telo_len_wgap': [],
@@ -132,7 +133,7 @@ class TeloCapture:
             df_dict['read_len'].append(len(fasta))
             df_dict['num_pass'].append(np)
             df_dict['read_qual'].append(rq)
-            df_dict['oligo'].append(oligo)
+            df_dict['oligo'].append(oligo_name)
             df_dict['barcode'].append(barcode_name)
             df_dict['oscore'].append(oligo_score)
             df_dict['bscore'].append(bar_score)
