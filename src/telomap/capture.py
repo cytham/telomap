@@ -145,7 +145,7 @@ class TeloCapture:
             df_dict['gap_loc'].append(gap_locs)
             df_dict['gap_dist'].append(gap_dists)
             df_dict['gap_seq'].append(gap_seq)
-            df_dict['s_junct'].append(telo_start_index)
+            df_dict['s_junct'].append(telo_start_index + 1)  # Make 1-based
             df_dict['e_junct'].append(telo_end_index)
             df_dict['telo_motif'].append(telo_motif_indexes)
             df_dict['trf_motif'].append(trf_motif_indexes)
@@ -252,7 +252,7 @@ class TeloCapture:
             df_dict['gap_loc'].append(gap_locs)
             df_dict['gap_dist'].append(gap_dists)
             df_dict['gap_seq'].append(gap_seq)
-            df_dict['s_junct'].append(telo_start_index)
+            df_dict['s_junct'].append(telo_start_index + 1)  # Make 1-based
             df_dict['e_junct'].append(junct)
             df_dict['telo_motif'].append(telo_motif_indexes)
             df_dict['trf_motif'].append(trf_motif_indexes)
