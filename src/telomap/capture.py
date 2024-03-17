@@ -127,6 +127,7 @@ class TeloCapture:
                             pass
                         else:
                             trf_count = self.count_trf(len(motif), telo_start_index, telo_motif_indexes, trf_motif_indexes)
+                        telo_start_index += 1  # make 1-based
             # Record data
             read_fasta[qname] = fasta  # Record FASTA
             df_dict['rname'].append(qname)
@@ -146,7 +147,7 @@ class TeloCapture:
             df_dict['gap_loc'].append(gap_locs)
             df_dict['gap_dist'].append(gap_dists)
             df_dict['gap_seq'].append(gap_seq)
-            df_dict['s_junct'].append(telo_start_index + 1)  # Make 1-based
+            df_dict['s_junct'].append(telo_start_index)
             df_dict['e_junct'].append(telo_end_index)
             df_dict['telo_motif'].append(telo_motif_indexes)
             df_dict['trf_motif'].append(trf_motif_indexes)
@@ -229,6 +230,7 @@ class TeloCapture:
                                     pass
                                 else:
                                     trf_count = self.count_trf(len(motif), telo_start_index, telo_motif_indexes, trf_motif_indexes)
+                                telo_start_index += 1  # make 1-based
                 elif res == 'multi':  # If sequence aligns to multiple oligos or barcodes
                     oligo = 'Multi'
                     multi_no += 1
@@ -253,7 +255,7 @@ class TeloCapture:
             df_dict['gap_loc'].append(gap_locs)
             df_dict['gap_dist'].append(gap_dists)
             df_dict['gap_seq'].append(gap_seq)
-            df_dict['s_junct'].append(telo_start_index + 1)  # Make 1-based
+            df_dict['s_junct'].append(telo_start_index)
             df_dict['e_junct'].append(junct)
             df_dict['telo_motif'].append(telo_motif_indexes)
             df_dict['trf_motif'].append(trf_motif_indexes)
