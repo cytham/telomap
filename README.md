@@ -1,6 +1,6 @@
 ## New feature: Telomap version 0.1.0 onwards now supports input of whole-genome sequencing (WGS) long-read data
 
-## Telomap - Telomere capture tool for WGS or telobait long-read sequencing data
+## Telomap - Telomere capture tool for WGS or telobait long-read data
 
 [![Build Status](https://app.travis-ci.com/cytham/telomap.svg?branch=main)](https://app.travis-ci.com/github/cytham/telomap)
 
