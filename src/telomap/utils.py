@@ -54,12 +54,12 @@ telobait (telobait capture mode)""")
     optional.add_argument("--oligoscore", type=restrict_float, metavar="float",
                           default=1,
                           help="""minimum alignment score fraction required 
-    for capture oligo sequence match [1]"""))
+    for capture oligo sequence match [1]""")
 
     optional.add_argument("--barcodescore", type=restrict_float, metavar="float",
                           default=1,
                           help="""minimum alignment score fraction required 
-    for barcode sequence match [1]"""))
+    for barcode sequence match [1]""")
     
     def restrict_threads(t):
         t = int(t)
