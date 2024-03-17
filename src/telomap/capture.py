@@ -11,7 +11,7 @@ from Bio import Align
 
 class TeloCapture:
 
-    def __init__(self, read_path, oligos, barcodes, sample_name, mode, motif):
+    def __init__(self, read_path, oligos, barcodes, sample_name, mode, motif, oligoscore, barscore):
         self.read_path = read_path
         self.oligos = oligos
         self.barcodes = barcodes
@@ -21,9 +21,9 @@ class TeloCapture:
         # self.pacbio_hifi_rq = 0.99  # Q20
         self.oligo_loc = '3prime'  # Location of capture oligo sequence on telomere (3prime/5prime)
         self.oligo_window = 150  # Length of window (bp) to search for capture oligo sequence
-        self.oligo_align_threshold = 1  # Minimum alignment score percentage required for capture oligo sequence match [100%]
+        self.oligo_align_threshold = oligoscore  # Minimum alignment score percentage required for capture oligo sequence match [100%]
         self.multi_oligo_align_threshold = 0.8  # Minimum alignment score fraction for additional capture oligo seq match [80%]
-        self.barcode_align_threshold = 1  # Minimum alignment score percentage required for barcode sequence match [100%]
+        self.barcode_align_threshold = barscore  # Minimum alignment score percentage required for barcode sequence match [100%]
         self.motif_window = 50  # Length of window (bp) to search for telomeric motif adjacent to capture oligo, or end of read for WGS
         self.motif_window_wgs = 150  # Length of window (bp) to search for telomeric motif for WGS mode
         self.motif_counts = 2  # Minimum number of telomeric motifs required to pass (adjacent to capture oligo)
