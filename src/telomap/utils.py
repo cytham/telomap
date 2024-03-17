@@ -40,6 +40,26 @@ telobait (telobait capture mode)""")
     optional.add_argument("-m", "--motif", type=str, metavar="str",
                           default="TTAGGG",
                           help="telomeric motif sequence [TTAGGG]")
+
+    # optional.add_argument("-l", "--telolen", type=int, metavar="int",
+    #                       default="12",
+    #                       help="minimum telomere length [12]")
+
+    def restrict_float(f):
+        f = float(f)
+        if f < 0 or f > 1:
+            raise argparse.ArgumentTypeError("%r not in range [0.00, 1.00]" % (f,))
+        return f
+
+    optional.add_argument("--oligoscore", type=restrict_float, metavar="float",
+                          default=1,
+                          help="""minimum alignment score fraction required 
+    for capture oligo sequence match [1]"""))
+
+    optional.add_argument("--barcodescore", type=restrict_float, metavar="float",
+                          default=1,
+                          help="""minimum alignment score fraction required 
+    for barcode sequence match [1]"""))
     
     def restrict_threads(t):
         t = int(t)
