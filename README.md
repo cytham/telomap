@@ -94,49 +94,42 @@ ATCGATAACTCGG
 
 | Output | Comment |
 | :--- | :--- |
-| ${sample}.telomap.tsv | Main output table containing per read information |
-| ${sample}.telomap.anchors.tsv | Table containing details of subtelomeric anchor sequences for chromosome-end mapping |
+| sample.telomap.tsv | Main output table containing per read information |
+| sample.telomap.anchors.tsv | Table containing details of subtelomeric anchor sequences for chromosome-end mapping |
 | plots | Directory containg analytic plots |
 | plots_QC | Directory containing QC plots |
 
-#### Main output table information
+#### Main output table information (sample.telomap.tsv)
 
 | # | Column name | Comment |
 | :--- | :--- | :--- |
 | 1 | RNAME | Read ID |
-| 2 | BARCODE | Detected sample barcode (NA for WGS mode) |
-| 3 | STRAND | Strand of read with reference to motif |
-| 4 | CHROM | Detected chromosomal end or unmappable sub-telomeric cluster (i.e. begins with "U") |
-| 5 | RLEN | Read length |
-| 6 | RAW_TELOMERE_LEN | Length of telomeric region demarcated by telomeric start and telomeric end (See below) |
-| 7 | TELOMERE_LEN | Length of telomeric region after excluding all non-telomeric sequences within RAW_TELOMERE_LEN (See below)|
-| 8 | TRF_COUNT | Number of TRF binding motifs detected (5'-TTAGGGTTA-3') |
-| 9 | TELOMERE_END | Estimated telomere end sequence |
-| 10 | MOTIF | Telomeric motif detected |
-| 11 | START_JUNC | Position on read where telomeric sequences start |
-| 12 | BARCODE_JUNC | Position on read where barcode was detected |
-| 13 | OLIGO | Name of capture oligo detected |
-| 14 | OLIGO_SCORE | Alignment score of capture oligo sequence |
-| 15 | BARCODE_SCORE | Alignment score of barcode sequence |
-| 16 | NUM_PASS | Number of full-length subreads (only for pacbio BAM data) |
-| 17 | RQUAL | Read quality (only for pacbio BAM data) |
+| 2 | OLIGO | Name of capture oligo detected (will be NA for WGS mode) |
+| 3 | BARCODE | Detected sample barcode (will be NA for WGS mode) |
+| 4 | STRAND | Strand of read with reference to motif |
+| 5 | MOTIF | Telomeric motif detected |
+| 6 | RLEN | Read length |
+| 7 | RAW_TELOMERE_LEN | Length of telomeric region in bases demarcated by TELOMERE_START and TELOMERE_END (See below) |
+| 8 | TELOMERE_LEN | Length of telomeric region in bases after excluding all non-telomeric sequences within RAW_TELOMERE_LEN (See below)|
+| 9 | TELOMERE_END_MOTIF | Last six 3' telomeric bases within telomeric region on read |
+| 10 | TRF_COUNT | Number of TRF binding motifs detected (5'-TTAGGGTTA-3') |
+| 11 | CHROM | Detected chromosomal end or unmappable sub-telomeric cluster (i.e. begins with "U") |
+| 12 | TELOMERE_START | Refers to the 1-based position on a read at the 5′ end of the telomeric region as defined by containing at least two consecutive telomeric repeats (5′-TTAGGGTTAGGG-3′) |
+| 13 | TELOMERE_END | Refers to the 1-based position on a read at the 3' end of the telomeric region as defined by being adjacent to the telobait sequence in telobait mode, or the 3' most complete/partial telomeric sequence in WGS mode |
+| 14 | NUM_PASS | Number of full-length subreads (only for pacbio BAM data) |
+| 15 | RQUAL | Read quality (only for pacbio BAM data) |
 
-#### Telomere length definition
-| Term | Comment |
-| :--- | :--- |
-| Telomeric start | Refers to the 5′ end of the telomeric region on a read as defined by containing at least two consecutive telomeric repeats (5′-TTAGGGTTAGGG-3′) |
-| Telomeric end | Refers to the 3' end of the telomeric region on a read as defined by the postion adjacent to the telobait sequence in telobait mode, or the 3' most complete/partial telomeric sequence in WGS mode |
-| RAW_TELOMERE_LEN | Refers to the number of bases between telomeric start and telomeric end |
-| TELOMERE_LEN | Refers to the number of bases between telomeric start and telomeric end but excluding non-telomeric sequences |
+#### Telomere length calcution example:
 
-Example:
+Example read: 5'-"ATAGGCATGC TTAGGGTTAGGG TTAGGG TTAGGG TTAGGG TG TTAGGG G TTAGGG TTGGG TTAGGG TTAGGGTTAG ATACAG"-3'
 
-Read = "ATAGGCATGC TTAGGGTTAGGG TTAGGG TTAGGG TTAGGG TG TTAGGG G TTAGGG TTGGG TTAGGG TTAGGGTTAG ATACAG"
-
-Telomeric start: Positions 11-22 (TTAGGGTTAGGG)  
-Telomeric end: Positions 67-76 (TTAGGGTTAG)  
-RAW_TELOMERE_LEN: 76 - 11 + 1 = 66 (TTAGGGTTAGGG TTAGGG TTAGGG TTAGGG TG TTAGGG G TTAGGG TTGGG TTAGGG TTAGGGTTAG)  
-TELOMERE_LEN: 9 motifs * 6 length = 54 (TTAGGGTTAGGG TTAGGG TTAGGG TTAGGG TTAGGG TTAGGG TTAGGG TTAGGG)  
+| Term | Value | Comment |
+| :--- | :--- | :--- |
+| TELOMERE_START | 11 | Positions 11-22 (TTAGGGTTAGGG) |
+| TELOMERE_END | 76 | Positions 67-76 (TTAGGGTTAG) |
+| RAW_TELOMERE_LEN | 66 | 76 - 11 + 1 = 66 (TTAGGGTTAGGG TTAGGG TTAGGG TTAGGG TG TTAGGG G TTAGGG TTGGG TTAGGG TTAGGGTTAG) |
+| TELOMERE_LEN | 54 | 9 motifs * 6 length = 54 (TTAGGGTTAGGG TTAGGG TTAGGG TTAGGG TTAGGG TTAGGG TTAGGG TTAGGG) |
+| TELOMERE_END_MOTIF | GGTTAG | |
 
 ### Operating system
 
