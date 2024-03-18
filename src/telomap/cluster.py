@@ -11,19 +11,20 @@ import queue
 
 
 class SubTeloClust:
-    def __init__(self, read_fasta: dict, barcode_reads: dict, ref_path: str, cores: int):
-        self.begin_time = datetime.now()
+    def __init__(self, read_fasta: dict, barcode_reads: dict, ref_path: str, cores: int, df):
+        # self.begin_time = datetime.now()
         self.read_fasta = read_fasta
         self.barcode_reads = barcode_reads
         barcodes = [b for b in self.barcode_reads]
         self.cores = int(cores)
+        self.df = df
         self.ref_path = ref_path
         self.all_motif_edit = {}
         self.all_anchor_groups = {}
         self.anchor_label = {}
         self.all_cons_seq = {}
         self.all_cons_grp = {}
-        self.telo_motif = 'TTAGGGTTAGGG'
+        # self.telo_motif = 'TTAGGGTTAGGG'
         self.telo_buf = 12
         self.min_len = 100
         self.motif_len = 100  # Anchor length
@@ -38,22 +39,74 @@ class SubTeloClust:
         self.aligner.open_gap_score = -2
         self.aligner.extend_gap_score = -0.5
         self.cluster_max_ovlp = 0.1
-        # self.multi_process_cluster(['HCT116-1', '293T-1', 'T24-1'])
         self.multi_process_cluster(barcodes)
         self.generate_consensus()
         self.map_anchor()
         dfa = self.create_anchor_df()
         self.dfa = self.unique_clust_label(dfa)
         self.read_to_clust = self.read_to_cluster()
-        self.end_time = datetime.now()
+        # self.end_time = datetime.now()
         # time_dif = self.end_time - self.begin_time
         now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
         print(now, '- Clustering finished')
         # print(self.end_time - self.begin_time)
 
+    # Multi-process clustering step
+    def multi_process_cluster(self, tasks):
+        number_of_processes = self.cores
+        tasks_to_accomplish = Queue()
+        tasks_that_are_done = Queue()
+        processes = []
+        for i in tasks:
+            tasks_to_accomplish.put(i)
+        # Creating processes
+        for w in range(number_of_processes):
+            p = Process(target=self.do_job, args=(tasks_to_accomplish, tasks_that_are_done))
+            processes.append(p)
+            p.start()
+        while True:
+            running = any(p.is_alive() for p in processes)
+            while not tasks_that_are_done.empty():
+                t = tasks_that_are_done.get()
+                self.all_motif_edit[t[1]] = t[2]
+                self.all_anchor_groups[t[1]] = t[3]
+                # print(t[0])
+            if not running:
+                break
+        # Completing process
+        for p in processes:
+            p.join()
+        return True
+    
+    # Carry out queued job
+    def do_job(self, tasks_to_accomplish, tasks_that_are_done):
+        while True:
+            try:
+                '''
+                    try to get task from the queue. get_nowait() function will 
+                    raise queue.Empty exception if the queue is empty. 
+                    queue(False) function would do the same task also.
+                '''
+                task = tasks_to_accomplish.get_nowait()
+            except queue.Empty:
+                break
+            else:
+                '''
+                    if no exception has been raised, add the task completion 
+                    message to task_that_are_done queue
+                '''
+                # print('Doing ', task)
+                motif_edit, master_hit_grp = self.subtelo_cluster(task)
+                tasks_that_are_done.put((task + ' is done by ' + current_process().name, task, motif_edit, master_hit_grp))
+                time.sleep(.5)
+        return True
+    
     # Cluster telomeres by their subtelomere sequence
     def subtelo_cluster(self, sample):
-        reads = self.barcode_reads[sample]
+        # reads = self.barcode_reads[sample]
+        # print(len(reads))
+        reads = self.df[(self.df['barcode'] == sample) & (self.df['motifs'].notnull())]['rname'].tolist()
+        # print(len(reads))
         # print(sample)
         # Identify subtelo-telo junction by first occurence of "telo_motif" and extract anchor and subtelomere region
         motif_dict, subtelo_dict, fail_len_counts = self.subtelo_prep(reads)
@@ -76,7 +129,8 @@ class SubTeloClust:
         motif_dict = {}
         fail_len_counts = 0
         for r in reads:
-            index = self.read_fasta[r].find(self.telo_motif)  # Get index of subtelo-telo junction according to telo_motif
+            index = self.df[self.df['rname'] == r]['s_junct'].values[0]  # Get telomere start index
+            # index = self.read_fasta[r].find(self.telo_motif)  # Get index of subtelo-telo junction according to telo_motif
             subtelo_dict[r] = self.read_fasta[r][:index + self.telo_buf]
             if len(subtelo_dict[r]) < self.min_len:  # Require subtelo region to be more than or equal to "min_len"
                 _ = subtelo_dict.pop(r)
@@ -144,94 +198,7 @@ class SubTeloClust:
             if len(prev_readnames) < len(readnames):
                 raise Exception('Error3')
         return hit_reads, motif_edit, master_hit_grp, readnames
-
-    # Consensus generation and cluster merging
-    def generate_consensus(self):
-        for sample in self.all_anchor_groups:
-            cons_dict = {}
-            for i in self.all_anchor_groups[sample]:
-                seqs = [str(self.all_motif_edit[sample][i])]
-                for j in self.all_anchor_groups[sample][i]:
-                    seqs.append(str(self.all_motif_edit[sample][j]))
-                cons_dict[i], score = self.consensus(seqs)
-            skip_dict = {}
-            new_cons_seq = {}
-            new_cons_grp = {}
-            for i in cons_dict:
-                if i not in skip_dict:
-                    new_cons_seq[i] = cons_dict[i]
-                    new_cons_grp[i] = list(self.all_anchor_groups[sample][i])
-                    skip_dict[i] = 1
-                    for j in cons_dict:
-                        if i != j and j not in skip_dict:
-                            a = self.aligner.align(cons_dict[i], cons_dict[j])
-                            if a[0].score >= self.motif_len * self.t:
-                                # Merge clusters
-                                new_cons_grp[i].extend(list(self.all_anchor_groups[sample][j]))
-                                skip_dict[j] = 1
-                    new_cons_grp[i] = set(new_cons_grp[i])
-            self.all_cons_seq[sample] = new_cons_seq
-            self.all_cons_grp[sample] = new_cons_grp
-
-    # Map anchor sequences to T2T-CHM13
-    def map_anchor(self):
-        ref_dict = {}
-        for seq_record in SeqIO.parse(self.ref_path, "fasta"):
-            ref_dict[seq_record.id] = seq_record.seq.upper()
-        for sample in self.all_cons_seq:
-            self.anchor_label[sample] = {}
-            for anchor in self.all_cons_seq[sample]:
-                self.anchor_label[sample][anchor] = []
-                for ref in ref_dict:
-                    if self.quick_align(self.all_cons_seq[sample][anchor], ref_dict[ref]):
-                        self.anchor_label[sample][anchor].append(ref)
-            a = 1
-            for anchor in self.anchor_label[sample]:
-                if len(self.anchor_label[sample][anchor]) == 1:
-                    self.anchor_label[sample][anchor] = self.anchor_label[sample][anchor][0]
-                elif 1 < len(self.anchor_label[sample][anchor]) <= 3:
-                    self.anchor_label[sample][anchor] = '/'.join(self.anchor_label[sample][anchor][0:3])
-                else:
-                    self.anchor_label[sample][anchor] = 'U' + str(a)
-                    a += 1
-
-    # Create anchor dataframe
-    def create_anchor_df(self):
-        data_dict = {'sample': [], 'anchor_read': [], 'anchor_seq': [], 'anchor_hits': [], 'chrom': []}
-        for sample in self.barcode_reads:
-            if sample in self.all_cons_seq:
-                for anchor in self.all_cons_seq[sample]:
-                    data_dict['sample'].append(sample)
-                    data_dict['anchor_read'].append(anchor)
-                    data_dict['anchor_seq'].append(str(self.all_cons_seq[sample][anchor]))
-                    data_dict['anchor_hits'].append(len(self.all_cons_grp[sample][anchor]))
-                    data_dict['chrom'].append(self.anchor_label[sample][anchor])
-        dfa = pd.DataFrame.from_dict(data_dict)
-        return dfa
-
-    # Make cluster label unique
-    def unique_clust_label(self, dfa):
-        for sample in self.all_cons_seq:
-            chroms = dfa[dfa['sample'] == sample]['chrom'].tolist()
-            dups = [item for item, count in Counter(chroms).items() if count > 1]
-            for d in dups:
-                c = 1
-                reads = dfa[(dfa['sample'] == sample) & (dfa['chrom'] == d)]['anchor_read'].tolist()
-                for a in reads:
-                    dfa.loc[dfa['anchor_read'] == a, 'chrom'] = d + '-' + str(c)
-                    self.anchor_label[sample][a] = d + '-' + str(c)
-                    c += 1
-        return dfa
-
-    # Make read to cluster dictionary
-    def read_to_cluster(self):
-        read_to_clust = {}
-        for s in self.anchor_label:
-            for a in self.anchor_label[s]:
-                for r in self.all_cons_grp[s][a]:
-                    read_to_clust[r] = self.anchor_label[s][a]
-        return read_to_clust
-
+    
     # To enrich for cluster anchor sequences from subtelomeres
     def motif_enrich(self, readnames, motif_dict, subtelo_dict):
         hit_dict = {}
@@ -340,6 +307,34 @@ class SubTeloClust:
         mid_end = que[q_index[-1][0]:q_index[-1][1]]
         new = start_seq + mid + mid_end + end_seq
         return new
+        
+    # Consensus generation and cluster merging
+    def generate_consensus(self):
+        for sample in self.all_anchor_groups:
+            cons_dict = {}
+            for i in self.all_anchor_groups[sample]:
+                seqs = [str(self.all_motif_edit[sample][i])]
+                for j in self.all_anchor_groups[sample][i]:
+                    seqs.append(str(self.all_motif_edit[sample][j]))
+                cons_dict[i], score = self.consensus(seqs)
+            skip_dict = {}
+            new_cons_seq = {}
+            new_cons_grp = {}
+            for i in cons_dict:
+                if i not in skip_dict:
+                    new_cons_seq[i] = cons_dict[i]
+                    new_cons_grp[i] = list(self.all_anchor_groups[sample][i])
+                    skip_dict[i] = 1
+                    for j in cons_dict:
+                        if i != j and j not in skip_dict:
+                            a = self.aligner.align(cons_dict[i], cons_dict[j])
+                            if a[0].score >= self.motif_len * self.t:
+                                # Merge clusters
+                                new_cons_grp[i].extend(list(self.all_anchor_groups[sample][j]))
+                                skip_dict[j] = 1
+                    new_cons_grp[i] = set(new_cons_grp[i])
+            self.all_cons_seq[sample] = new_cons_seq
+            self.all_cons_grp[sample] = new_cons_grp
 
     # Generate consensus anchor sequence for a cluster of reads
     @staticmethod
@@ -359,7 +354,29 @@ class SubTeloClust:
             cons += common[0]
             score.append(common[1] / n)
         return cons, score
-
+    
+    # Map anchor sequences to T2T-CHM13
+    def map_anchor(self):
+        ref_dict = {}
+        for seq_record in SeqIO.parse(self.ref_path, "fasta"):
+            ref_dict[seq_record.id] = seq_record.seq.upper()
+        for sample in self.all_cons_seq:
+            self.anchor_label[sample] = {}
+            for anchor in self.all_cons_seq[sample]:
+                self.anchor_label[sample][anchor] = []
+                for ref in ref_dict:
+                    if self.quick_align(self.all_cons_seq[sample][anchor], ref_dict[ref]):
+                        self.anchor_label[sample][anchor].append(ref)
+            a = 1
+            for anchor in self.anchor_label[sample]:
+                if len(self.anchor_label[sample][anchor]) == 1:
+                    self.anchor_label[sample][anchor] = self.anchor_label[sample][anchor][0]
+                elif 1 < len(self.anchor_label[sample][anchor]) <= 3:
+                    self.anchor_label[sample][anchor] = '/'.join(self.anchor_label[sample][anchor][0:3])
+                else:
+                    self.anchor_label[sample][anchor] = 'U' + str(a)
+                    a += 1
+    
     # Find out if two sequences align well
     def quick_align(self, seq1, seq2):
         min_len = min(len(seq1), len(seq2))
@@ -368,271 +385,43 @@ class SubTeloClust:
             return True
         else:
             return False
+    
+    # Create anchor dataframe
+    def create_anchor_df(self):
+        data_dict = {'sample': [], 'anchor_read': [], 'anchor_seq': [], 'anchor_hits': [], 'chrom': []}
+        for sample in self.barcode_reads:
+            if sample in self.all_cons_seq:
+                for anchor in self.all_cons_seq[sample]:
+                    data_dict['sample'].append(sample)
+                    data_dict['anchor_read'].append(anchor)
+                    data_dict['anchor_seq'].append(str(self.all_cons_seq[sample][anchor]))
+                    data_dict['anchor_hits'].append(len(self.all_cons_grp[sample][anchor]))
+                    data_dict['chrom'].append(self.anchor_label[sample][anchor])
+        dfa = pd.DataFrame.from_dict(data_dict)
+        return dfa
 
-    # Carry out queued job
-    def do_job(self, tasks_to_accomplish, tasks_that_are_done):
-        while True:
-            try:
-                '''
-                    try to get task from the queue. get_nowait() function will 
-                    raise queue.Empty exception if the queue is empty. 
-                    queue(False) function would do the same task also.
-                '''
-                task = tasks_to_accomplish.get_nowait()
-            except queue.Empty:
-                break
-            else:
-                '''
-                    if no exception has been raised, add the task completion 
-                    message to task_that_are_done queue
-                '''
-                # print('Doing ', task)
-                motif_edit, master_hit_grp = self.subtelo_cluster(task)
-                tasks_that_are_done.put((task + ' is done by ' + current_process().name, task, motif_edit, master_hit_grp))
-                time.sleep(.5)
-        return True
+    # Make cluster label unique
+    def unique_clust_label(self, dfa):
+        for sample in self.all_cons_seq:
+            chroms = dfa[dfa['sample'] == sample]['chrom'].tolist()
+            dups = [item for item, count in Counter(chroms).items() if count > 1]
+            for d in dups:
+                c = 1
+                reads = dfa[(dfa['sample'] == sample) & (dfa['chrom'] == d)]['anchor_read'].tolist()
+                for a in reads:
+                    dfa.loc[dfa['anchor_read'] == a, 'chrom'] = d + '-' + str(c)
+                    self.anchor_label[sample][a] = d + '-' + str(c)
+                    c += 1
+        return dfa
 
-    # Multi-process clustering step
-    def multi_process_cluster(self, tasks):
-        number_of_processes = self.cores
-        tasks_to_accomplish = Queue()
-        tasks_that_are_done = Queue()
-        processes = []
-        for i in tasks:
-            tasks_to_accomplish.put(i)
-        # Creating processes
-        for w in range(number_of_processes):
-            p = Process(target=self.do_job, args=(tasks_to_accomplish, tasks_that_are_done))
-            processes.append(p)
-            p.start()
-        while True:
-            running = any(p.is_alive() for p in processes)
-            while not tasks_that_are_done.empty():
-                t = tasks_that_are_done.get()
-                self.all_motif_edit[t[1]] = t[2]
-                self.all_anchor_groups[t[1]] = t[3]
-                # print(t[0])
-            if not running:
-                break
-        # Completing process
-        for p in processes:
-            p.join()
-        return True
-
-
-
-''' # Before
-read_chrm, dfa = subtelo_cluster(read_fasta, barcode_reads, chm13_path)
-HCT116-1
-Iteration 1
-Using 6288 reads
- Found 41 potential anchors
-  205 reads with hits less than threshold
-6083 unique reads in clusters
-5143 unique reads pass clusterings
-Iteration 2
-Using 1145 reads
- Found 3 potential anchors
-  213 reads with hits less than threshold
-932 unique reads in clusters
-932 unique reads pass clusterings
-Iteration 3
-Using 213 reads
- Found 0 potential anchors
-  213 reads with hits less than threshold
-No hits found, left 188 anchors unclustered
-213 reads left unclustered
-Ended with 6075 reads clustered
-293T-1
-Iteration 1
-Using 5555 reads
- Found 50 potential anchors
-  205 reads with hits less than threshold
-5350 unique reads in clusters
-5189 unique reads pass clusterings
-Iteration 2
-Using 366 reads
- Found 2 potential anchors
-  205 reads with hits less than threshold
-161 unique reads in clusters
-0 unique reads pass clusterings
-366 reads left unclustered
-Ended with 5189 reads clustered
-
-
-# After class
-clust = SubTeloClust(read_fasta, barcode_reads, chm13_path)
-HCT116-1
-Iteration 1
-Using 6288 reads
- Found 41 potential anchors
-  205 reads with hits less than threshold
-6083 unique reads in clusters
-5143 unique reads pass clusterings
-Iteration 2
-Using 1145 reads
- Found 3 potential anchors
-  213 reads with hits less than threshold
-932 unique reads in clusters
-932 unique reads pass clusterings
-Iteration 3
-Using 213 reads
- Found 0 potential anchors
-  213 reads with hits less than threshold
-No hits found, left 188 anchors unclustered
-213 reads left unclustered
-Ended with 6075 reads clustered
-293T-1
-Iteration 1
-Using 5555 reads
- Found 50 potential anchors
-  205 reads with hits less than threshold
-5350 unique reads in clusters
-5189 unique reads pass clusterings
-Iteration 2
-Using 366 reads
- Found 2 potential anchors
-  205 reads with hits less than threshold
-161 unique reads in clusters
-0 unique reads pass clusterings
-366 reads left unclustered
-Ended with 5189 reads clustered
-0:16:31.436495
-
-# Using two processes
-clust = SubTeloClust(read_fasta, barcode_reads, chm13_path)
-Doing  HCT116-1
-HCT116-1
-Iteration 1
-Using 6288 reads
-Doing  293T-1
-293T-1
-Iteration 1
-Using 5555 reads
- Found 41 potential anchors
-  209 reads with hits less than threshold
- Found 51 potential anchors
-  206 reads with hits less than threshold
-6079 unique reads in clusters
-5189 unique reads pass clusterings
-Iteration 2
-Using 1099 reads
- Found 5 potential anchors
-  209 reads with hits less than threshold
-5349 unique reads in clusters
-5058 unique reads pass clusterings
-Iteration 2
-Using 497 reads
-890 unique reads in clusters
-126 unique reads pass clusterings
-Iteration 3
-Using 973 reads
- Found 4 potential anchors
-  206 reads with hits less than threshold
-291 unique reads in clusters
-0 unique reads pass clusterings
-497 reads left unclustered
-Ended with 5058 reads clustered
- Found 3 potential anchors
-  209 reads with hits less than threshold
-764 unique reads in clusters
-565 unique reads pass clusterings
-Iteration 4
-Using 408 reads
- Found 1 potential anchors
-  216 reads with hits less than threshold
-192 unique reads in clusters
-192 unique reads pass clusterings
-Iteration 5
-Using 216 reads
- Found 0 potential anchors
-  216 reads with hits less than threshold
-No hits found, left 188 anchors unclustered
-216 reads left unclustered
-Ended with 6072 reads clustered
-293T-1 is done by Process-8
-HCT116-1 is done by Process-7
-0:08:48.032984
-
-# Random seed per sample (no multi thread)
-HCT116-1
-Iteration 1
-Using 6288 reads
- Found 41 potential anchors
-  205 reads with hits less than threshold
-6083 unique reads in clusters
-5143 unique reads pass clusterings
-Iteration 2
-Using 1145 reads
- Found 3 potential anchors
-  213 reads with hits less than threshold
-932 unique reads in clusters
-932 unique reads pass clusterings
-Iteration 3
-Using 213 reads
- Found 0 potential anchors
-  213 reads with hits less than threshold
-No hits found, left 188 anchors unclustered
-213 reads left unclustered
-Ended with 6075 reads clustered
-293T-1
-Iteration 1
-Using 5555 reads
- Found 52 potential anchors
-  210 reads with hits less than threshold
-5345 unique reads in clusters
-5054 unique reads pass clusterings
-Iteration 2
-Using 501 reads
- Found 4 potential anchors
-  210 reads with hits less than threshold
-291 unique reads in clusters
-0 unique reads pass clusterings
-501 reads left unclustered
-Ended with 5054 reads clustered
-0:17:18.719059
-
-# Random seed per sample (with multi thread)
-HCT116-1
-Iteration 1
-Using 6288 reads
-293T-1
-Iteration 1
-Using 5555 reads
- Found 41 potential anchors
-  205 reads with hits less than threshold
- Found 52 potential anchors
-  210 reads with hits less than threshold
-6083 unique reads in clusters
-5143 unique reads pass clusterings
-Iteration 2
-Using 1145 reads
- Found 3 potential anchors
-  213 reads with hits less than threshold
-932 unique reads in clusters
-932 unique reads pass clusterings
-Iteration 3
-Using 213 reads
-5345 unique reads in clusters
-5054 unique reads pass clusterings
-Iteration 2
-Using 501 reads
- Found 0 potential anchors
-  213 reads with hits less than threshold
-No hits found, left 188 anchors unclustered
-213 reads left unclustered
-Ended with 6075 reads clustered
- Found 4 potential anchors
-  210 reads with hits less than threshold
-291 unique reads in clusters
-0 unique reads pass clusterings
-501 reads left unclustered
-Ended with 5054 reads clustered
-0:08:13.542427
-
-
-
-'''
+    # Make read to cluster dictionary
+    def read_to_cluster(self):
+        read_to_clust = {}
+        for s in self.anchor_label:
+            for a in self.anchor_label[s]:
+                for r in self.all_cons_grp[s][a]:
+                    read_to_clust[r] = self.anchor_label[s][a]
+        return read_to_clust
 
 '''
 class Test:
