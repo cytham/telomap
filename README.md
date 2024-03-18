@@ -102,13 +102,13 @@ ATCGAGCTGGATT
 ATCGATAACTCGG
 ```
 
-### Output
+### Output files
 
 | Output | Comment |
 | :--- | :--- |
 | sample.telomap.tsv | Main output table containing per read information |
 | sample.telomap.anchors.tsv | Table containing details of subtelomeric anchor sequences for chromosome-end mapping |
-| plots | Directory containg analytic plots |
+| plots | Directory containing analytic plots |
 | plots_QC | Directory containing QC plots |
 
 #### Main output table information (sample.telomap.tsv)
