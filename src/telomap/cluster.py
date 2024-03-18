@@ -129,7 +129,7 @@ class SubTeloClust:
         motif_dict = {}
         fail_len_counts = 0
         for r in reads:
-            index = self.df[self.df['rname'] == r]['s_junct'].values[0]  # Get telomere start index
+            index = self.df[self.df['rname'] == r]['s_junct'].values[0] - 1  # Get telomere start index
             # index = self.read_fasta[r].find(self.telo_motif)  # Get index of subtelo-telo junction according to telo_motif
             subtelo_dict[r] = self.read_fasta[r][:index + self.telo_buf]
             if len(subtelo_dict[r]) < self.min_len:  # Require subtelo region to be more than or equal to "min_len"
