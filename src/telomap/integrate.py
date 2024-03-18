@@ -49,7 +49,7 @@ class TeloMap:
         return cap.df, cap.read_fasta, cap.barcode_reads, cap.counts, header
 
     def cluster_telomeres(self):
-        clust = SubTeloClust(self.read_fasta, self.barcode_reads, self.chm13_path, self.cores)
+        clust = SubTeloClust(self.read_fasta, self.barcode_reads, self.chm13_path, self.cores, self.df)
         return clust.read_to_clust, clust.dfa
 
     def telo_variant_seq_analysis(self):
