@@ -28,7 +28,7 @@ class TeloCapture:
         self.motif_window_wgs = 150  # Length of window (bp) to search for telomeric motif for WGS mode
         self.motif_counts = 2  # Minimum number of telomeric motifs required to pass (adjacent to capture oligo)
         self.motif_direction = 'upstream'  # Location of telomeric motif with respect to capture oligo (upstream/downstream)
-        self.telo_start_sequence = 'TTAGGGTTAGGG'  # Defines the 5 prime start of telomere
+        self.telo_start_motif_count = 2  # Defines the 5 prime start of telomere
         self.motif_end_len = 6  # Length of telomere end sequence motif
         self.max_gap_size = 6  # Maximum gap size to be considered for gap sequence analysis
         self.motifs = [motif]  # Specify telomeric motifs
@@ -107,7 +107,7 @@ class TeloCapture:
                     strand = '-'
             if output:
                 motif = output[0]
-                telo_start_index = fasta.find(self.telo_start_sequence)
+                telo_start_index = fasta.find(motif*self.telo_start_motif_count)
                 if telo_start_index > -1:  # If telomere start sequence is found
                     # Retrieve last motif sequence
                     last_motifs_fa = fasta[output[1][-1][0]:output[1][-1][0] + len(motif)*2]
@@ -210,7 +210,7 @@ class TeloCapture:
                     if motif_out:  # If read contains telomeric motifs
                         # Retrieve telomere end sequence
                         motif = motif_out[0]
-                        telo_start_index = fasta.find(self.telo_start_sequence)
+                        telo_start_index = fasta.find(motif*self.telo_start_motif_count)
                         if telo_start_index > -1:  # If telomere start sequence is found
                             if junct - telo_start_index >= self.telo_min_len:  # Minimum telomere length filter
                                 telomere_no += 1
