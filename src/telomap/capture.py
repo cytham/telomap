@@ -270,7 +270,7 @@ class TeloCapture:
     
     # Detect data type
     def detect_data_type(self):
-        if any(self.read_path.lower().endswith(s) for s in ['.fa', '.fasta', '.fa.gz', '.fasta.gz']):
+        if any(self.read_path.lower().endswith(s) for s in ['.fa', '.fasta', '.fa.gz', '.fasta.gz', '.fq', '.fastq', '.fq.gz', '.fastq.gz']):
             return 'fastx'
         elif self.read_path.lower().endswith('.bam'):
             return 'bam'
