@@ -37,8 +37,9 @@ def main():
     # tsv_dir = os.path.join(args.dir, 'plots_tvs', out.input_name)
 
     # Pickle data
-    # with open(os.path.join(args.dir, out.input_name + ".telomap.pkl"), "wb") as f:
-    #     pickle.dump(out, f)
+    if args.pickle:
+        with open(os.path.join(args.dir, out.input_name + ".telomap.pkl"), "wb") as f:
+            pickle.dump(out, f)
 
     # Generate TSV files
     create_tsv(out, args.dir)
