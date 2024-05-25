@@ -147,14 +147,20 @@ class TeloCapture:
             df_dict['telo_end'].append(telo_end)
             df_dict['telo_len'].append(telo_len_no_gap)
             df_dict['telo_len_wgap'].append(telo_len_wgap)
-            df_dict['gap_size'].append(gap_sizes)
-            df_dict['gap_loc'].append(gap_locs)
-            df_dict['gap_dist'].append(gap_dists)
-            df_dict['gap_seq'].append(gap_seq)
+            # df_dict['gap_size'].append(gap_sizes)  # removed to reduce memory
+            # df_dict['gap_loc'].append(gap_locs)  # removed to reduce memory
+            # df_dict['gap_dist'].append(gap_dists)  # removed to reduce memory
+            # df_dict['gap_seq'].append(gap_seq)  # removed to reduce memory
+            df_dict['gap_size'].append(None)
+            df_dict['gap_loc'].append(None)
+            df_dict['gap_dist'].append(None)
+            df_dict['gap_seq'].append(None)
             df_dict['s_junct'].append(telo_start_index)
             df_dict['e_junct'].append(telo_end_index)
-            df_dict['telo_motif'].append(telo_motif_indexes)
-            df_dict['trf_motif'].append(trf_motif_indexes)
+            # df_dict['telo_motif'].append(telo_motif_indexes)  # removed to reduce memory
+            df_dict['telo_motif'].append(None)
+            # df_dict['trf_motif'].append(trf_motif_indexes)  # removed to reduce memory
+            df_dict['trf_motif'].append(None)
             df_dict['trf_count'].append(trf_count)
         # Create dataframe
         df = pd.DataFrame.from_dict(df_dict)
@@ -259,14 +265,20 @@ class TeloCapture:
             df_dict['telo_end'].append(telo_end)
             df_dict['telo_len'].append(telo_len_no_gap)
             df_dict['telo_len_wgap'].append(telo_len_wgap)
-            df_dict['gap_size'].append(gap_sizes)
-            df_dict['gap_loc'].append(gap_locs)
-            df_dict['gap_dist'].append(gap_dists)
-            df_dict['gap_seq'].append(gap_seq)
+            # df_dict['gap_size'].append(gap_sizes)  # removed to reduce memory
+            # df_dict['gap_loc'].append(gap_locs)  # removed to reduce memory
+            # df_dict['gap_dist'].append(gap_dists)  # removed to reduce memory
+            # df_dict['gap_seq'].append(gap_seq)  # removed to reduce memory
+            df_dict['gap_size'].append(None)
+            df_dict['gap_loc'].append(None)
+            df_dict['gap_dist'].append(None)
+            df_dict['gap_seq'].append(None)
             df_dict['s_junct'].append(telo_start_index)
             df_dict['e_junct'].append(junct)
-            df_dict['telo_motif'].append(telo_motif_indexes)
-            df_dict['trf_motif'].append(trf_motif_indexes)
+            # df_dict['telo_motif'].append(telo_motif_indexes)  # removed to reduce memory
+            df_dict['telo_motif'].append(None)
+            # df_dict['trf_motif'].append(trf_motif_indexes)  # removed to reduce memory
+            df_dict['trf_motif'].append(None)
             df_dict['trf_count'].append(trf_count)
         # Create dataframe
         df = pd.DataFrame.from_dict(df_dict)

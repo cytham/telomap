@@ -5,7 +5,7 @@ from Bio.Seq import Seq
 from datetime import date
 from datetime import datetime
 from .capture import TeloCapture
-from .cluster import SubTeloClust
+from .cluster import SubTeloClustWGS
 from .tvs import tvs_analyzer
 from .version import __version__
 
@@ -37,19 +37,19 @@ class TeloMap:
         read_to_cluster, self.df_anchors = self.cluster_telomeres()
         self.df['chrom'] = self.df['rname'].map(read_to_cluster)
         now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
-        print(now + ' - Analyzing TVS')
-        self.tvs_arr, self.tvs_read_counts = self.telo_variant_seq_analysis()
+        #print(now + ' - Analyzing TVS')
+        #self.tvs_arr, self.tvs_read_counts = self.telo_variant_seq_analysis()
 
     def capture_telomeres(self, read_path):
         cap = TeloCapture(read_path, self.oligos, self.barcodes, self.input_name, self.mode, self.motif, self.oligoscore, self.barscore)
         if self.tsv_header:
-            header = self.create_tvs_header(read_path, cap)
+            header = self.create_tsv_header(read_path, cap)
         else:
             header = None
         return cap.df, cap.read_fasta, cap.barcode_reads, cap.counts, header
 
     def cluster_telomeres(self):
-        clust = SubTeloClust(self.read_fasta, self.barcode_reads, self.chm13_path, self.cores, self.df)
+        clust = SubTeloClustWGS(self.read_fasta, self.barcode_reads, self.chm13_path, self.cores, self.df)
         return clust.read_to_clust, clust.dfa
 
     def telo_variant_seq_analysis(self):
@@ -86,8 +86,8 @@ class TeloMap:
                     seq_dict[seq_name] = [seq, seq_rc]
         return seq_dict
 
-    # Create TVS header
-    def create_tvs_header(self, read_path, cap):
+    # Create TSV header
+    def create_tsv_header(self, read_path, cap):
         h = []
         today = date.today()
         today_date = today.strftime("%d-%m-%Y")
