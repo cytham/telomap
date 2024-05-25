@@ -4,6 +4,9 @@ Telomap Changelog
 Release Summary:
 
 
+Version 0.2.1 - May 25, 2024
+    * Patch to include kneed as dependancy
+
 Version 0.2.0 - May 25, 2024
     * Massive speed improvement (>15X) to subtelomere clustering algorithm (Process ~180k telomeric reads in 40min with 6 threads)
     * Multi-threading now compatible with WGS mode
