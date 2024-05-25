@@ -83,7 +83,10 @@ per read, causing high read omission. [1]""")
     optional.add_argument("-h", "--help", action="help",
                           default=argparse.SUPPRESS,
                           help="show this help message and exit")
-  
+
+    optional.add_argument("--pickle", action='store_true',
+                          help=argparse.SUPPRESS)
+
     args = parser.parse_args(args)
     check_analysis_mode(args.mode)
     check_sample_name(args.name)

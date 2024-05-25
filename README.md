@@ -1,4 +1,6 @@
-## New feature: Telomap version 0.1.0 onwards now supports input of whole-genome sequencing (WGS) long-read data
+## Updates:
+- v0.2.0: Greatly reduces processing time for both WGS and telobait modes
+- v0.1.0: Supports input of whole-genome sequencing (WGS) long-read data
 
 ## Telomap - Telomere capture tool for WGS or telobait long-read data
 
