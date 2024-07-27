@@ -44,40 +44,41 @@ def main():
     # Generate TSV files
     create_tsv(out, args.dir)
 
-    # Generate plots
-    # Plot overview figures
-    # Plot number of reads for each sample
-    plot_sample_read(out.df, plot_dir, out.barcodes)
-    # Pie chart of telomeric read capture
-    plot_pie(out.counts, plot_dir)
-    # Plot telomere length histogram
-    plot_telo_len(out.df, plot_dir)
-    # Plot telomere length per sample (Violin)
-    plot_telo_violin(out.df, plot_dir, out.barcodes)
-    # Plot telomere end motif
-    plot_telo_end(out.df, plot_dir, out.barcodes)
-    # Plot barplot for number of reads mapping to each chromosome end
-    plot_chrm_bar(out.df_anchors, plot_dir)
-    # Plot gap analysis
-    # plot_telo_gap(out.df, plot_dir, out.barcodes)  # Disabled due to memory consumption
-
-    # Plot QC figures
-    # Plot read length histogram
-    plot_len(out.df, qc_dir)
-    # Plot read passes histogram
-    plot_passes(out.df, qc_dir)
-    # Plot read quality histogram
-    plot_qual(out.df, qc_dir)
-    # Plot read quality vs passes scatter plot
-    plot_pass_qual_scatter(out.df, qc_dir)
-
-    # Plot TRF figures
-    # Plot TRF1/TRF2 binding motif boxplot for each chromosome end
-    # plot_trf_boxplot(out.barcode_reads, out.df, trf_dir)  # Disabled due to memory consumption
-
-    # Plot TVS figures
-    # Plot TVS signature figures
-    # plot_tvs_sig(out.tvs_arr, out.tvs_read_counts, tsv_dir, telo_len=1000)  # Disabled due to memory consumption
+    if args.plots:
+        # Generate plots
+        # Plot overview figures
+        # Plot number of reads for each sample
+        plot_sample_read(out.df, plot_dir, out.barcodes)
+        # Pie chart of telomeric read capture
+        plot_pie(out.counts, plot_dir)
+        # Plot telomere length histogram
+        plot_telo_len(out.df, plot_dir)
+        # Plot telomere length per sample (Violin)
+        plot_telo_violin(out.df, plot_dir, out.barcodes)
+        # Plot telomere end motif
+        plot_telo_end(out.df, plot_dir, out.barcodes)
+        # Plot barplot for number of reads mapping to each chromosome end
+        plot_chrm_bar(out.df_anchors, plot_dir)
+        # Plot gap analysis
+        # plot_telo_gap(out.df, plot_dir, out.barcodes)  # Disabled due to memory consumption
+        
+        # Plot QC figures
+        # Plot read length histogram
+        plot_len(out.df, qc_dir)
+        # Plot read passes histogram
+        plot_passes(out.df, qc_dir)
+        # Plot read quality histogram
+        plot_qual(out.df, qc_dir)
+        # Plot read quality vs passes scatter plot
+        plot_pass_qual_scatter(out.df, qc_dir)
+        
+        # Plot TRF figures
+        # Plot TRF1/TRF2 binding motif boxplot for each chromosome end
+        # plot_trf_boxplot(out.barcode_reads, out.df, trf_dir)  # Disabled due to memory consumption
+        
+        # Plot TVS figures
+        # Plot TVS signature figures
+        # plot_tvs_sig(out.tvs_arr, out.tvs_read_counts, tsv_dir, telo_len=1000)  # Disabled due to memory consumption
 
     now = datetime.now().strftime("[%d/%m/%Y %H:%M:%S]")
     print(now + ' - Telomap ended')
