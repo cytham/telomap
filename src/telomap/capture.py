@@ -11,7 +11,7 @@ from Bio import Align
 
 class TeloCapture:
 
-    def __init__(self, read_path, oligos, barcodes, sample_name, mode, motif, oligoscore, barscore):
+    def __init__(self, read_path, oligos, barcodes, sample_name, mode, motif, oligoscore, barscore, gapopen=-100, gapextend=-100):
         self.read_path = read_path
         self.oligos = oligos
         self.barcodes = barcodes
@@ -40,8 +40,8 @@ class TeloCapture:
         self.aligner1.mode = 'local'
         self.aligner1.match_score = 1
         self.aligner1.mismatch_score = 0
-        self.aligner1.open_gap_score = -100
-        self.aligner1.extend_gap_score = -100
+        self.aligner1.open_gap_score = gapopen
+        self.aligner1.extend_gap_score = gapextend
         self.aligner2 = Align.PairwiseAligner()
         self.aligner2.mode = 'local'
         self.aligner2.match_score = 1
