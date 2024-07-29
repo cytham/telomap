@@ -242,9 +242,9 @@ class TeloCapture:
                                     trf_count = self.count_trf(len(motif), telo_start_index, telo_motif_indexes, trf_motif_indexes)
                                 telo_start_index += 1  # make 1-based
                             else:
-                                motif = strand = None
+                                motif = None
                         else:
-                            motif = strand = None
+                            motif = None
                 elif res == 'multi':  # If sequence aligns to multiple oligos or barcodes
                     oligo = 'Multi'
                     multi_no += 1
