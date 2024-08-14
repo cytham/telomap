@@ -36,6 +36,9 @@ telobait (telobait capture mode)""")
     optional.add_argument("-n", "--name", type=str, metavar="str",
                           default="sample",
                           help="name prefix for output files [sample]")
+    
+    optional.add_argument("--plots", action='store_true',
+                          help="output QC and analysis plots")
 
     optional.add_argument("-m", "--motif", type=str, metavar="str",
                           default="TTAGGG",
@@ -70,13 +73,13 @@ per read, causing high read omission. [1]""")
     optional.add_argument("--gapextend", type=int, metavar="int",
                           default="-100",
                           help="gap extend penalty score for capture oligo and barcode alignment [-100]")
-    
+
     def restrict_threads(t):
         t = int(t)
         if t < 1:
             raise argparse.ArgumentTypeError("Number of threads specified < 1, minimum requirement is 1 thread.")
         return t
-    
+
     optional.add_argument("-t", "--threads", type=restrict_threads, metavar="int",
                           default=1,
                           help="specify number of threads [1]")
