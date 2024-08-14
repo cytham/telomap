@@ -62,6 +62,14 @@ for capture oligo sequence match [1]""")
 for barcode sequence match. Warning: Reducing 
 this value may lead to multiple barcode mapping 
 per read, causing high read omission. [1]""")
+
+    optional.add_argument("--gapopen", type=int, metavar="int",
+                          default="-100",
+                          help="gap open penalty score for capture oligo and barcode alignment [-100]")
+
+    optional.add_argument("--gapextend", type=int, metavar="int",
+                          default="-100",
+                          help="gap extend penalty score for capture oligo and barcode alignment [-100]")
     
     def restrict_threads(t):
         t = int(t)
